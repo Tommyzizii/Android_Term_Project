@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.pennytrack"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.pennytrack"
