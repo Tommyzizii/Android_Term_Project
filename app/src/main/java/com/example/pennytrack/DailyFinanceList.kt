@@ -1,16 +1,20 @@
 package com.example.pennytrack
 
+import android.app.TimePickerDialog
 import android.icu.text.CaseMap.Title
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 //import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -19,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -48,14 +53,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.intellij.lang.annotations.JdkConstants
+import java.util.Calendar
+import java.util.Locale
 
 data class DetailItem(
     val id: Int,
@@ -66,67 +75,42 @@ data class DetailItem(
 )
 
 @Composable
-fun ItemListApp(modifier: Modifier){
-    var sItems by rememberSaveable { mutableStateOf(listOf<DetailItem>()) }
-    var detailName by rememberSaveable { mutableStateOf("") }
-    var detailAmount by rememberSaveable { mutableStateOf("") }
-    var detailDescription by rememberSaveable { mutableStateOf("") }
+fun ItemListApp(modifier: Modifier) {
+    var items by rememberSaveable { mutableStateOf(listOf<DetailItem>()) }
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
+    Column(
+         modifier = Modifier.fillMaxSize().padding(16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(42.dp))
+        Text("Welcome to PennyWise!", fontSize = 23.sp, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+        Spacer(modifier = Modifier.height(8.dp))
 
-    Column (
-        modifier = Modifier.fillMaxSize().
-        wrapContentWidth(Alignment.CenterHorizontally).
-        wrapContentHeight(Alignment.CenterVertically))
-    {
-        Text(
-            "Welcome!!!",
-            modifier = Modifier.padding(15.dp),
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Italic
-        )
-
-        Text(
-            "PennyWise",
-            modifier = Modifier.padding(14.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Row (modifier = Modifier.fillMaxWidth().padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween){
-            Text("Daily Expense Tracker",
-                modifier = Modifier.padding(16.dp).align(Alignment.CenterVertically))
-            Button(
-                onClick = {showDialog = true},
-                modifier = Modifier.padding(16.dp)
-            ) { Text("Add") }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Daily Expense Tracker", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+            Button(onClick = { showDialog = true }) { Text("Add") }
         }
 
-
-        LazyColumn (
-            modifier = Modifier.fillMaxSize().padding(16.dp)
-        ) {
-            items(sItems){
-                    item ->
-                if(item.isEditing){
-                    EditDetailEditor(item = item,
-                        onEditComplete = {
-                                editedName, editedAmount, editedDescription ->
-                            sItems = sItems.map { it.copy(isEditing = false) }
-                            val editedDetail = sItems.find { it.id == item.id }
-                            editedDetail?.let {
-                                it.name = editedName
-                                it.amount = editedAmount
-                                it.description = editedDescription
-                            }
-                        })
-                }else{
-                    DetailList(detailItem = item,
+        LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(items) { item ->
+                if (item.isEditing) {
+                    EditDetailEditor(item = item, onEditComplete = { editedName, editedAmount, editedDescription ->
+                        items = items.map {
+                            if (it.id == item.id) it.copy(name = editedName, amount = editedAmount, description = editedDescription, isEditing = false)
+                            else it
+                        }
+                    })
+                } else {
+                    DetailList(
+                        detailItem = item,
                         onEditClick = {
-                            sItems = sItems.map { it.copy(isEditing = it.id == item.id) }},
+                            items = items.map { it.copy(isEditing = it.id == item.id) }
+                        },
                         onDeleteClick = {
-                            sItems = sItems - item
+                            items = items.filter { it.id != item.id }
                         }
                     )
                 }
@@ -134,67 +118,135 @@ fun ItemListApp(modifier: Modifier){
         }
     }
 
-    if(showDialog){
+    if (showDialog) {
+        ExpenseDialog(
+            showDialog = showDialog,
+            onDismiss = { showDialog = false },
+            onSave = { name, amount, description, date, time ->
+                val newDetailItem = DetailItem(
+                    id = items.size + 1,
+                    name = name,
+                    amount = amount,
+                    description = "$description\nDate: $date\nTime: $time"
+                )
+                items = items + newDetailItem
+            }
+        )
+    }
+}
+
+@Composable
+fun ExpenseDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onSave: (String, Int, String, String, String) -> Unit
+) {
+    var detailName by rememberSaveable { mutableStateOf("") }
+    var detailAmount by rememberSaveable { mutableStateOf("") }
+    var detailDescription by rememberSaveable { mutableStateOf("") }
+    var selectedDate by rememberSaveable { mutableStateOf("") }
+    var selectedTime by rememberSaveable { mutableStateOf("") }
+
+    val context = LocalContext.current
+
+    val calendar = Calendar.getInstance()
+
+    // Date Picker Dialog
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            selectedDate = "$dayOfMonth/${month + 1}/$year"
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    // Time Picker Dialog
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hourOfDay, minute ->
+            selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)
+        }
+        ,
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
+    )
+
+    if (showDialog) {
         AlertDialog(
-            onDismissRequest = {showDialog = false},
+            onDismissRequest = onDismiss,
             confirmButton = {
-                Row (modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween){
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Button(
                         onClick = {
-                            if (detailName.isNotBlank()){
-                                val newDetailItem = DetailItem(
-                                    id = sItems.size + 1,
-                                    name = detailName,
-                                    amount = detailAmount.toInt(),
-                                    description = detailDescription
-                                )
-                                sItems = sItems + newDetailItem
-                                showDialog = false
-                                detailName = ""
-                                detailAmount = ""
-                                detailDescription = ""
+                            if (detailName.isNotBlank() && detailAmount.isNotBlank()) {
+                                onSave(detailName, detailAmount.toInt(), detailDescription, selectedDate, selectedTime)
+                                onDismiss()
                             }
                         }
                     ) { Text("Add") }
-                    Button(
-                        onClick = {
-                            showDialog = false
-                        }
-                    ) { Text("Cancel") }
+
+                    Button(onClick = onDismiss) { Text("Cancel") }
                 }
             },
-            title = { Text("Update Expenses") },
+            title = { Text("Add Expense") },
             text = {
                 Column {
                     Text("Enter Item:", fontStyle = FontStyle.Italic)
                     OutlinedTextField(
                         value = detailName,
-                        onValueChange = {detailName = it},
-                        modifier = Modifier.
-                        wrapContentHeight(Alignment.CenterVertically).
-                        padding(8.dp),
-                        singleLine = true,
-                        maxLines = 1
+                        onValueChange = { detailName = it },
+                        modifier = Modifier.padding(8.dp),
+                        singleLine = true
                     )
+
                     Text("Enter Amount:", fontStyle = FontStyle.Italic)
                     OutlinedTextField(
                         value = detailAmount,
-                        onValueChange = {detailAmount = it},
-                        modifier = Modifier.
-                        wrapContentHeight(Alignment.CenterVertically).
-                        padding(8.dp),
-                        singleLine = true,
-                        maxLines = 1
+                        onValueChange = { detailAmount = it },
+                        modifier = Modifier.padding(8.dp),
+                        singleLine = true
                     )
-                    Text("Description", fontStyle = FontStyle.Italic)
+
+                    Text("Description:", fontStyle = FontStyle.Italic)
                     OutlinedTextField(
                         value = detailDescription,
-                        onValueChange = {detailDescription = it},
-                        modifier = Modifier.
-                        wrapContentHeight(Alignment.CenterVertically).
-                        padding(8.dp),
+                        onValueChange = { detailDescription = it },
+                        modifier = Modifier.padding(8.dp),
                         maxLines = 3
+                    )
+
+                    // Date Picker
+                    Text("Select Date:", fontStyle = FontStyle.Italic)
+                    OutlinedTextField(
+                        value = selectedDate,
+                        onValueChange = {},
+                        modifier = Modifier.padding(8.dp),
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { datePickerDialog.show() }) {
+                                Icon(Icons.Default.Edit, contentDescription = "Pick Date")
+                            }
+                        }
+                    )
+
+                    // Time Picker
+                    Text("Select Time:", fontStyle = FontStyle.Italic)
+                    OutlinedTextField(
+                        value = selectedTime,
+                        onValueChange = {},
+                        modifier = Modifier.padding(8.dp),
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { timePickerDialog.show() }) {
+                                Icon(Icons.Default.Edit, contentDescription = "Pick Time")
+                            }
+                        }
                     )
                 }
             }
@@ -203,94 +255,93 @@ fun ItemListApp(modifier: Modifier){
 }
 
 @Composable
-fun EditDetailEditor(
-    item: DetailItem,
-    onEditComplete: (String,Int,String) -> Unit,
-){
+fun EditDetailEditor(item: DetailItem, onEditComplete: (String, Int, String) -> Unit) {
     var editedName by rememberSaveable { mutableStateOf(item.name) }
     var editedAmount by rememberSaveable { mutableStateOf(item.amount.toString()) }
     var editedDescription by rememberSaveable { mutableStateOf(item.description) }
-    var isEditing by rememberSaveable { mutableStateOf(item.isEditing) }
 
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .background(Color.White).padding(8.dp).border(
-                border = BorderStroke(2.dp, Color.Black),
-                shape = RoundedCornerShape(20)),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ){
-        Column {
-            BasicTextField(
-                value = editedName,
-                onValueChange = {editedName = it},
-                singleLine = true,
-                modifier = Modifier.wrapContentSize().padding(8.dp)
-            )
-            BasicTextField(
-                value = editedAmount,
-                onValueChange = {editedAmount = it},
-                singleLine = true,
-                modifier = Modifier.wrapContentSize().padding(8.dp)
-            )
-            BasicTextField(
-                value = editedDescription,
-                onValueChange = {editedDescription = it},
-                singleLine = true,
-                modifier = Modifier.wrapContentSize().padding(8.dp)
-            )
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(16.dp))
+            .border(BorderStroke(2.dp, Color.Black), RoundedCornerShape(16.dp))
+            .padding(16.dp)
+    ) {
+        Text("Edit Details", fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 8.dp))
 
-        Button(onClick = {
-            isEditing = false
-            onEditComplete(editedName,editedAmount.toIntOrNull() ?:1,editedDescription)
-        }, modifier = Modifier.align(Alignment.CenterVertically)) {
-            Text("Save",
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium)
+        OutlinedTextField(
+            value = editedName,
+            onValueChange = { editedName = it },
+            label = { Text("Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = editedAmount,
+            onValueChange = { editedAmount = it },
+            label = { Text("Amount") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = editedDescription,
+            onValueChange = { editedDescription = it },
+            label = { Text("Description") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = { onEditComplete(editedName, editedAmount.toIntOrNull() ?: 0, editedDescription) },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Save")
         }
     }
-
 }
 
 @Composable
-fun DetailList(
-    detailItem: DetailItem,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit
-){
+fun DetailList(detailItem: DetailItem, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.LightGray, RoundedCornerShape(16.dp))
+            .border(BorderStroke(2.dp, Color.LightGray), RoundedCornerShape(16.dp))
+            .padding(16.dp)
+            .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                detailItem.name,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text("Amount: ${detailItem.amount} $", fontSize = 14.sp)
+            Text(
+                detailItem.description,
+                fontSize = 14.sp,
+                color = Color.DarkGray,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
-    Column {
-        Text(detailItem.description, modifier = Modifier.padding(8.dp),
-            fontSize = 15.sp,
-            color = Color.DarkGray)
-    }
-
-    Row ( modifier = Modifier.padding(8.dp).fillMaxWidth()
-        .background(color = Color.LightGray, shape = RoundedCornerShape(20))
-        .border(
-            border = BorderStroke(2.dp, color = Color.LightGray),
-            shape = RoundedCornerShape(20)
-        ), horizontalArrangement = Arrangement.SpaceBetween,){
-        //Name
-        Text(
-            text = detailItem.name,
-            fontSize = 16.sp,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterVertically).padding(8.dp)
-        )
-        // Amount
-        Text(
-            text = "Amount: ${detailItem.amount} $",
-            fontSize = 16.sp,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-        Row (modifier = Modifier.padding(8.dp).align(Alignment.CenterVertically)){
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             IconButton(onClick = onEditClick) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.Blue)
             }
             IconButton(onClick = onDeleteClick) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
             }
         }
     }
