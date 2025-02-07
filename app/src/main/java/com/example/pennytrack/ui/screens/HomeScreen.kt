@@ -90,7 +90,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                 BottomAppBar(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(innerPadding)
+
                 ) {
                     IconButton(
                         onClick = { navController.navigate("home") },

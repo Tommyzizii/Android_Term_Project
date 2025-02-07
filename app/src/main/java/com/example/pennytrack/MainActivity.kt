@@ -3,6 +3,7 @@ package com.example.pennytrack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import com.example.pennytrack.viewmodels.ExpenseViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
             PennyTrackTheme {

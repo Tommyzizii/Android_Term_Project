@@ -155,15 +155,15 @@ fun ProfileScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Back to Home Button
-                Button(
-                    onClick = { navController.navigate("home") },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Back to Home")
-                }
+//                // Back to Home Button
+//                Button(
+//                    onClick = { navController.navigate("home") },
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Text("Back to Home")
+//                }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                //Spacer(modifier = Modifier.height(8.dp))
 
                 // Edit Profile Button
                 ButtonPanel()
