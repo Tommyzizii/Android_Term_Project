@@ -58,6 +58,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseTitle,
             onValueChange = { expenseTitle = it },
             label = { Text("Expense Title") }
@@ -65,6 +66,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseAmount,
             onValueChange = { expenseAmount = it },
             label = { Text("Amount") }
@@ -72,6 +74,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseDescription,
             onValueChange = { expenseDescription = it },
             label = { Text("Description") }
@@ -79,6 +82,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseDate,
             onValueChange = {},
             label = { Text("Expense Date") },
@@ -92,6 +96,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseTime,
             onValueChange = {},
             label = { Text("Expense Time") },
