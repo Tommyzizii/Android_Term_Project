@@ -9,16 +9,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +47,11 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("PennyTrack") },
+                title = { Text("PennyTrack",
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                ) },
                 scrollBehavior = scrollBehavior
             )
         },
@@ -63,7 +71,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                     )
 
                     // Expense List
-                    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                    LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
                         items(expenses.size) { index ->
                             ExpenseItem(
                                 expense = expenses[index],
@@ -79,24 +87,52 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                     }
                 }
 
-                // Home Icon at bottom-left
-                IconButton(
-                    onClick = { /* Action to reset state or navigate to a root screen */ },
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(16.dp)
-                ) {
-                    Icon(Icons.Filled.Home, contentDescription = "Home")
-                }
-
-                // Floating Action Button in the center
-                FloatingActionButton(
-                    onClick = { navController.navigate("addExpense") },
+                BottomAppBar(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(16.dp)
+                        .padding(innerPadding)
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                    IconButton(
+                        onClick = { navController.navigate("home") },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Filled.Home, contentDescription = "Home")
+                    }
+
+                    // History Icon
+                    IconButton(
+                        onClick = { navController.navigate("history") },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    }
+
+                    // Add Expense (Floating Action Button)
+                    FloatingActionButton(
+                        onClick = { navController.navigate("addExpense") },
+                        modifier = Modifier
+                            .size(56.dp)
+                            .align(Alignment.CenterVertically)
+                            .padding(0.dp)
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                    }
+
+                    // Map Icon
+                    IconButton(
+                        onClick = { navController.navigate("map") },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Filled.LocationOn, contentDescription = "Map")
+                    }
+
+                    // Profile Icon
+                    IconButton(
+                        onClick = { navController.navigate("profile") },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                    }
                 }
             }
         }
@@ -123,52 +159,54 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
 
 @Composable
 fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.LightGray, RoundedCornerShape(16.dp))
-            .border(BorderStroke(2.dp, Color.LightGray), RoundedCornerShape(16.dp))
-            .padding(16.dp)
-            .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                expense.title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text("Amount: \$${expense.amount}", fontSize = 14.sp)
-            Text(
-                "Description: ${expense.description}",
-                fontSize = 14.sp,
-                color = Color.DarkGray,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-            Text(
-                "Date: ${expense.date}",
-                fontSize = 14.sp,
-                color = Color.DarkGray,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-            Text(
-                "Time: ${expense.time}",
-                fontSize = 14.sp,
-                color = Color.DarkGray,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
+    Column (modifier = Modifier.padding(vertical = 8.dp)){
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.LightGray, RoundedCornerShape(16.dp))
+                .border(BorderStroke(2.dp, Color.LightGray), RoundedCornerShape(16.dp))
+                .padding(16.dp)
+                .height(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(onClick = onEdit) {
-                Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.Blue)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    expense.title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text("Amount: \$${expense.amount}", fontSize = 14.sp)
+                Text(
+                    "Description: ${expense.description}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                Text(
+                    "Date: ${expense.date}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                Text(
+                    "Time: ${expense.time}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Red)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.Blue)
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Red)
+                }
             }
         }
     }

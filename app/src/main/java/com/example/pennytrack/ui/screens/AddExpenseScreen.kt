@@ -7,7 +7,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,7 +51,9 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
         true
     )
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
         Text(text = "Add Expense", style = MaterialTheme.typography.titleLarge)
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -100,19 +104,29 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            val expense = Expense(
-                title = expenseTitle,
-                amount = expenseAmount.toFloatOrNull() ?: 0f,
-                description = expenseDescription,
-                date = expenseDate,
-                time = expenseTime
-            )
-            // Save the new expense in the ViewModel
-            expenseViewModel.addExpense(expense)
-            navController.popBackStack()  // Navigate back after adding the expense
-        }) {
-            Text("Add Expense")
+
+        Row(){
+
+            Button(onClick = {
+                val expense = Expense(
+                    title = expenseTitle,
+                    amount = expenseAmount.toFloatOrNull() ?: 0f,
+                    description = expenseDescription,
+                    date = expenseDate,
+                    time = expenseTime
+                )
+                // Save the new expense in the ViewModel
+                expenseViewModel.addExpense(expense)
+                navController.popBackStack()  // Navigate back after adding the expense
+            }, modifier = Modifier.padding(32.dp)) {
+                Text("Add Expense")
+            }
+
+            Button(onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(32.dp)){
+                Text("Cancel")
+            }
+
         }
     }
 }
