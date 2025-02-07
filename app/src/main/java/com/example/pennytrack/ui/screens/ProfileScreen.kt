@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
@@ -196,11 +197,33 @@ fun ProfileDetail(label: String, value: String) {
 
 @Composable
 fun ButtonPanel() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(16.dp)  // Add padding for better spacing
+    ) {
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { /* Edit Action */ }, modifier = Modifier.fillMaxWidth()) {
-            Text("Edit")
+
+        ElevatedButton(
+            onClick = { /* Edit Action */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),  // Adjust the button height
+            shape = MaterialTheme.shapes.medium,  // Rounded corners
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            elevation = ButtonDefaults.elevatedButtonElevation(8.dp)  // Elevation for depth
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,  // Use the "Edit" icon
+                contentDescription = "Edit",
+                modifier = Modifier.size(20.dp)  // Adjust the icon size
+            )
+            Spacer(modifier = Modifier.width(8.dp))  // Space between icon and text
+            Text("Edit", style = MaterialTheme.typography.bodyLarge)  // Button text
         }
+
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
