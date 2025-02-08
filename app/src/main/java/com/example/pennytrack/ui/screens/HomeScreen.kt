@@ -47,9 +47,9 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("PennyTrack",
+                title = { Text("Penny Track",
                     fontStyle = FontStyle.Italic,
-                    fontSize = 20.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 ) },
                 scrollBehavior = scrollBehavior
@@ -66,8 +66,10 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                     // Total Daily Expenses Display
                     Text(
                         text = "Total Daily Expenses: \$${expenses.sumOf { it.amount.toDouble() }}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
 
                     // Expense List
