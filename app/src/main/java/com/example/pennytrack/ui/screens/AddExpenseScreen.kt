@@ -3,6 +3,7 @@ package com.example.pennytrack.ui.screens
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -69,7 +71,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseAmount,
             onValueChange = { expenseAmount = it },
-            label = { Text("Amount") }
+            label = { Text("Amount")}
         )
 
         Spacer(modifier = Modifier.height(8.dp))
