@@ -39,7 +39,7 @@ import com.example.pennytrack.viewmodels.ExpenseViewModel
 @Composable
 fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel = viewModel()) {
     // Use remember to hold the expenses list to trigger recomposition when it changes
-    var expenses by remember { mutableStateOf(expenseViewModel.expenses) }
+    val expenses by expenseViewModel.expenses.collectAsState()
     var selectedExpense by remember { mutableStateOf<Expense?>(null) } // Track selected expense for editing
 
     // Navigation logic for Home screen
@@ -73,6 +73,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(16.dp)
                     )
 
                     // Expense List
@@ -85,7 +86,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                                 },
                                 onDelete = {
                                     expenseViewModel.removeExpense(expenses[index])
-                                    expenses = expenseViewModel.expenses // Update expenses list after delete
+                                    //expenses = expenseViewModel.expenses // Update expenses list after delete
                                 }
                             )
                         }
@@ -149,12 +150,10 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
         EditDetailEditor(
             expense = expense,
             onEditComplete = { name, amount, description, date, time ->
+
                 // Update the expense in the ViewModel
                 val updatedExpense = expense.copy(title = name, amount = amount.toFloat(), description = description, date = date, time = time)
                 expenseViewModel.updateExpense(updatedExpense)
-
-                // Update the expenses list in the HomeScreen
-                expenses = expenseViewModel.expenses // Get the updated list after edit
 
                 selectedExpense = null // Close the editor after saving
             }
@@ -168,8 +167,8 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.LightGray, RoundedCornerShape(16.dp))
-                .border(BorderStroke(2.dp, Color.LightGray), RoundedCornerShape(16.dp))
+                .background(color = Color.LightGray, RoundedCornerShape(16.dp))
+                .border(BorderStroke(2.dp, color = Color.LightGray), RoundedCornerShape(16.dp))
                 .padding(16.dp)
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
@@ -178,26 +177,30 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     expense.title,
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
-                Text("Amount: \$${expense.amount}", fontSize = 14.sp, color = Color.White)
+                Text("Amount: \$${expense.amount}", fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold, color = Color.White)
                 Text(
                     "Description: ${expense.description}",
                     fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.DarkGray,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
                     "Date: ${expense.date}",
                     fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.DarkGray,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
                     "Time: ${expense.time}",
                     fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.DarkGray,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -207,10 +210,10 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 IconButton(onClick = onEdit) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.Blue)
+                    Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.Black)
                 }
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Red)
+                    Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Black)
                 }
             }
         }

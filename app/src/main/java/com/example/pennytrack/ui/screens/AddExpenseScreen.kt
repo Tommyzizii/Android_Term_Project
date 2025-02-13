@@ -115,7 +115,9 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
         Row(){
 
             Button(onClick = {
+                val newId = expenseViewModel.expenses.value.size + 1
                 val expense = Expense(
+                    id = newId,
                     title = expenseTitle,
                     amount = expenseAmount.toFloatOrNull() ?: 0f,
                     description = expenseDescription,
