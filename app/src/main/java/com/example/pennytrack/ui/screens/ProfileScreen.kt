@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.example.pennytrack.ui.theme.TopAppBarColor
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +67,9 @@ fun ProfileScreen(navController: NavController) {
             topBar = {
                 TopAppBar(
                     title = { Text("Profile") },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = TopAppBarColor
+                    ),
                     actions = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Filled.Menu, contentDescription = "Open Menu")

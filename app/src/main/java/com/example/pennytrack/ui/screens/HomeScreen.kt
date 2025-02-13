@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.data.models.Expense
+import com.example.pennytrack.ui.theme.TopAppBarColor
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,10 +49,12 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
         topBar = {
             TopAppBar(
                 title = { Text("Penny Track",
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 ) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TopAppBarColor
+                ),
                 scrollBehavior = scrollBehavior
             )
         },
