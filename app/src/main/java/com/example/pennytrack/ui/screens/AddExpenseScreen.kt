@@ -2,15 +2,19 @@ package com.example.pennytrack.ui.screens
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
+import androidx.compose.material3.TextFieldDefaults.shape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,8 +23,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import com.example.pennytrack.data.models.Expense
+import com.example.pennytrack.ui.theme.AddScreenBackground
+import com.example.pennytrack.ui.theme.TopAppBarColor
+import com.example.pennytrack.ui.theme.softPurple
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseViewModel = viewModel()) {
     var expenseTitle by remember { mutableStateOf("") }
@@ -53,36 +61,58 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
         true
     )
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp),
+    Column(modifier = Modifier.fillMaxSize().background(color = Color.White).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Text(text = "Add Expense", style = MaterialTheme.typography.titleLarge)
 
         Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseTitle,
             onValueChange = { expenseTitle = it },
-            label = { Text("Expense Title") }
+            label = { Text("Expense Title")},
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color(0xFFE0F7FA),
+                focusedBorderColor = Color(0xFF00796B),
+                unfocusedBorderColor = Color(0xFFB2DFDB)
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseAmount,
             onValueChange = { expenseAmount = it },
-            label = { Text("Amount")}
+            label = { Text("Amount")},
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color(0xFFE0F7FA),
+                focusedBorderColor = Color(0xFF00796B),
+                unfocusedBorderColor = Color(0xFFB2DFDB)
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseDescription,
             onValueChange = { expenseDescription = it },
-            label = { Text("Description") }
+            label = { Text("Description") },
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color(0xFFE0F7FA),
+                focusedBorderColor = Color(0xFF00796B),
+                unfocusedBorderColor = Color(0xFFB2DFDB)
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseDate,
@@ -93,10 +123,17 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
                 IconButton(onClick = { datePickerDialog.show() }) {
                     Icon(Icons.Default.Edit, contentDescription = "Pick Date")
                 }
-            }
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color(0xFFE0F7FA),
+                focusedBorderColor = Color(0xFF00796B),
+                unfocusedBorderColor = Color(0xFFB2DFDB)
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             value = expenseTime,
@@ -107,12 +144,25 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
                 IconButton(onClick = { timePickerDialog.show() }) {
                     Icon(Icons.Default.Edit, contentDescription = "Pick Time")
                 }
-            }
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color(0xFFE0F7FA),
+                focusedBorderColor = Color(0xFF00796B),
+                unfocusedBorderColor = Color(0xFFB2DFDB)
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(){
+
+            Button(onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(32.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = TopAppBarColor)
+                ){
+                Text("Cancel", fontWeight = FontWeight.Bold, color = Color.DarkGray)
+            }
 
             Button(onClick = {
                 val newId = expenseViewModel.expenses.value.size + 1
@@ -127,13 +177,10 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
                 // Save the new expense in the ViewModel
                 expenseViewModel.addExpense(expense)
                 navController.popBackStack()  // Navigate back after adding the expense
-            }, modifier = Modifier.padding(32.dp)) {
-                Text("Add Expense")
-            }
-
-            Button(onClick = { navController.popBackStack() },
-                modifier = Modifier.padding(32.dp)){
-                Text("Cancel")
+            },
+                modifier = Modifier.padding(32.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = TopAppBarColor)) {
+                Text("Add", fontWeight = FontWeight.Bold, color = Color.DarkGray)
             }
 
         }

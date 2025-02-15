@@ -182,7 +182,7 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text("Amount: \$${expense.amount}", fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold, color = Color.White)
+                    fontWeight = FontWeight.Bold, color = Color.DarkGray)
                 Text(
                     "Description: ${expense.description}",
                     fontSize = 14.sp,

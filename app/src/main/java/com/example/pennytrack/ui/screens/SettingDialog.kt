@@ -1,5 +1,6 @@
 package com.example.pennytrack.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -41,7 +43,7 @@ fun SettingsDialog(
         ) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
-                tonalElevation = 8.dp
+                tonalElevation = 8.dp,
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),

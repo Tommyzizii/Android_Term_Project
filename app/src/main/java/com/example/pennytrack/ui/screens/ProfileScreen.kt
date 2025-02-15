@@ -177,6 +177,7 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 
+
     // Show Settings Dialog
     if (showSettingsDialog) {
         SettingsDialog(
