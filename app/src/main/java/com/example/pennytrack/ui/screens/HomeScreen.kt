@@ -33,6 +33,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.ui.theme.TopAppBarColor
+import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
+import com.example.pennytrack.ui.theme.md_theme_light_onPrimaryContainer
+import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
+import com.example.pennytrack.ui.theme.md_theme_light_primary
+import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
+import com.example.pennytrack.ui.theme.md_theme_light_surface
+import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,15 +56,18 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
         topBar = {
             TopAppBar(
                 title = { Text("Penny Track",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = md_theme_light_onPrimary
                 ) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TopAppBarColor
+                    containerColor = md_theme_light_primary,
+                    scrolledContainerColor = md_theme_light_onPrimary
                 ),
                 scrollBehavior = scrollBehavior
             )
         },
+        containerColor = md_theme_light_surface,
         content = { innerPadding ->
             Box(modifier = Modifier.fillMaxSize()) {
                 // Main content
@@ -67,14 +77,21 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         .padding(innerPadding)
                 ) {
                     // Total Daily Expenses Display
-                    Text(
-                        text = "Total Daily Expenses: \$${expenses.sumOf { it.amount.toDouble() }}",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
-                    )
+                    Card(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = md_theme_light_surfaceVariant)
+                    ){
+                        Text(
+                            text = "Total Daily Expenses: \$${expenses.sumOf { it.amount.toDouble() }}",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                                .padding(16.dp)
+                        )
+                    }
 
                     // Expense List
                     LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
@@ -95,14 +112,17 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
 
                 BottomAppBar(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    containerColor = md_theme_light_primary,
+                    contentColor = md_theme_light_onPrimary
 
                 ) {
                     IconButton(
                         onClick = { navController.navigate("home") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
+                        Icon(Icons.Filled.Home, contentDescription = "Home",
+                            tint = md_theme_light_onPrimary)
                     }
 
                     // History Icon
@@ -110,7 +130,8 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "History")
+                        Icon(Icons.Filled.DateRange, contentDescription = "History",
+                            tint = md_theme_light_onPrimary)
                     }
 
                     // Add Expense (Floating Action Button)
@@ -119,7 +140,9 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         modifier = Modifier
                             .size(56.dp)
                             .align(Alignment.CenterVertically)
-                            .padding(0.dp)
+                            .padding(0.dp),
+                        containerColor = md_theme_light_primaryContainer,
+                        contentColor = md_theme_light_onPrimaryContainer
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                     }
@@ -129,7 +152,8 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         onClick = { navController.navigate("map") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.LocationOn, contentDescription = "Map")
+                        Icon(Icons.Filled.LocationOn, contentDescription = "Map",
+                            tint = md_theme_light_onPrimary)
                     }
 
                     // Profile Icon
@@ -137,7 +161,8 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         onClick = { navController.navigate("profile") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile",
+                            tint = md_theme_light_onPrimary)
                     }
                 }
             }
@@ -147,15 +172,20 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
     // Show the EditDetailsEditor when an expense is selected for editing
     selectedExpense?.let { expense ->
         // Edit detail editor within the HomeScreen composable
-        EditDetailEditor(
+        EditExpenseDialog (
             expense = expense,
-            onEditComplete = { name, amount, description, date, time ->
-
-                // Update the expense in the ViewModel
-                val updatedExpense = expense.copy(title = name, amount = amount.toFloat(), description = description, date = date, time = time)
-                expenseViewModel.updateExpense(updatedExpense)
-
-                selectedExpense = null // Close the editor after saving
+            onDismiss = { selectedExpense = null},
+            onEditComplete = {
+                name, amount, description, date, time ->
+                val updateExpense = expense.copy(
+                    title = name,
+                    amount = amount.toFloat(),
+                    description = description,
+                    date = date,
+                    time = time
+                )
+                expenseViewModel.updateExpense(updateExpense)
+                selectedExpense = null
             }
         )
     }
@@ -163,135 +193,96 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
 
 @Composable
 fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
-    Column (modifier = Modifier.padding(vertical = 8.dp)){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.LightGray, RoundedCornerShape(16.dp))
-                .border(BorderStroke(2.dp, color = Color.LightGray), RoundedCornerShape(16.dp))
-                .padding(16.dp)
-                .height(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = md_theme_light_surfaceVariant
+        ),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     expense.title,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                Text("Amount: \$${expense.amount}", fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold, color = Color.DarkGray)
-                Text(
-                    "Description: ${expense.description}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray,
-                    modifier = Modifier.padding(top = 4.dp)
+                    color = md_theme_light_onSurfaceVariant
                 )
                 Text(
-                    "Date: ${expense.date}",
-                    fontSize = 14.sp,
+                    "$${String.format("%.2f", expense.amount)}",
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    "Time: ${expense.time}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray,
-                    modifier = Modifier.padding(top = 4.dp)
+                    color = md_theme_light_primary
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                expense.description,
+                fontSize = 16.sp,
+                color = md_theme_light_onSurfaceVariant.copy(alpha = 0.8f)
+            )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onEdit) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.Black)
+                Column {
+                    Text(
+                        expense.date,
+                        fontSize = 14.sp,
+                        color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        expense.time,
+                        fontSize = 14.sp,
+                        color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                    )
                 }
-                IconButton(onClick = onDelete) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Black)
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    IconButton(
+                        onClick = onEdit,
+                        modifier = Modifier
+                            .size(32.dp)
+                        //.background(MaterialTheme.colorScheme.primary, CircleShape)
+                    ) {
+                        Icon(
+                            Icons.Filled.Edit,
+                            contentDescription = "Edit",
+                            tint = Color.Blue,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier
+                            .size(32.dp)
+                        //.background(Color.Red.copy(alpha = 0.8f), CircleShape)
+                    ) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = "Delete",
+                            tint = Color.Red,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun EditDetailEditor(expense: Expense, onEditComplete: (String, Float, String, String, String) -> Unit) {
-    var editedName by rememberSaveable { mutableStateOf(expense.title) }
-    var editedAmount by rememberSaveable { mutableStateOf(expense.amount.toString()) }
-    var editedDescription by rememberSaveable { mutableStateOf(expense.description) }
-    var editedDate by rememberSaveable { mutableStateOf(expense.date) }
-    var editedTime by rememberSaveable { mutableStateOf(expense.time) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(16.dp))
-            .border(BorderStroke(2.dp, Color.Black), RoundedCornerShape(16.dp))
-            .padding(16.dp)
-    ) {
-        Text("Edit Details", fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 8.dp))
-
-        OutlinedTextField(
-            value = editedName,
-            onValueChange = { editedName = it },
-            label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = editedAmount,
-            onValueChange = { editedAmount = it },
-            label = { Text("Amount") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = editedDescription,
-            onValueChange = { editedDescription = it },
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Date Input
-        OutlinedTextField(
-            value = editedDate,
-            onValueChange = { editedDate = it },
-            label = { Text("Date") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Time Input
-        OutlinedTextField(
-            value = editedTime,
-            onValueChange = { editedTime = it },
-            label = { Text("Time") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                onEditComplete(editedName, editedAmount.toFloatOrNull() ?: 0f, editedDescription, editedDate, editedTime)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Save")
         }
     }
 }
