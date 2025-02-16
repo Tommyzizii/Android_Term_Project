@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import com.example.pennytrack.ui.theme.TopAppBarColor
 import com.example.pennytrack.ui.theme.md_theme_dark_primaryContainer
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimaryContainer

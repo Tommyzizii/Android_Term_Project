@@ -10,11 +10,6 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val DarkSeaGreen = Color(0xFF03fca9)
-val TopAppBarColor = Color(0xFFa1c7ba)
-val softPurple = Color(0xFFE1BEE7)
-val AddScreenBackground = Color(0XFFe8edec)
-
 val md_theme_light_primary = Color(0xFF246D25)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFA7F5A7)

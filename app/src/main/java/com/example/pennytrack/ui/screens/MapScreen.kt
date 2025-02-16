@@ -33,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.pennytrack.ui.theme.TopAppBarColor
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_surface

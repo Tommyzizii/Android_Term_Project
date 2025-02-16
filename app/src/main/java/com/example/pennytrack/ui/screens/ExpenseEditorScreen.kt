@@ -33,7 +33,6 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.data.models.Expense
-import com.example.pennytrack.ui.theme.TopAppBarColor
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimaryContainer
 import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
