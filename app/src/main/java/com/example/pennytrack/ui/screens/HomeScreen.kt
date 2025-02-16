@@ -113,16 +113,15 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                 BottomAppBar(
                     modifier = Modifier
                         .align(Alignment.BottomCenter),
-                    containerColor = md_theme_light_primary,
-                    contentColor = md_theme_light_onPrimary
+                    containerColor = md_theme_light_surface,
+                    contentColor = md_theme_light_primary
 
                 ) {
                     IconButton(
                         onClick = { navController.navigate("home") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home",
-                            tint = md_theme_light_onPrimary)
+                        Icon(Icons.Filled.Home, contentDescription = "Home")
                     }
 
                     // History Icon
@@ -130,8 +129,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "History",
-                            tint = md_theme_light_onPrimary)
+                        Icon(Icons.Filled.DateRange, contentDescription = "History")
                     }
 
                     // Add Expense (Floating Action Button)
@@ -141,8 +139,8 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                             .size(56.dp)
                             .align(Alignment.CenterVertically)
                             .padding(0.dp),
-                        containerColor = md_theme_light_primaryContainer,
-                        contentColor = md_theme_light_onPrimaryContainer
+                        containerColor = md_theme_light_primary,
+                        contentColor = md_theme_light_onPrimary
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                     }
@@ -152,8 +150,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         onClick = { navController.navigate("map") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.LocationOn, contentDescription = "Map",
-                            tint = md_theme_light_onPrimary)
+                        Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                     }
 
                     // Profile Icon
@@ -161,8 +158,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         onClick = { navController.navigate("profile") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile",
-                            tint = md_theme_light_onPrimary)
+                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
                     }
                 }
             }

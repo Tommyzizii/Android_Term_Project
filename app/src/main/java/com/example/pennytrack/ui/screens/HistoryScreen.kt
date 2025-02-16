@@ -27,26 +27,41 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pennytrack.ui.theme.TopAppBarColor
+import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
+import com.example.pennytrack.ui.theme.md_theme_light_primary
+import com.example.pennytrack.ui.theme.md_theme_light_surface
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(navController: NavController){
 
-        Scaffold(
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("History",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = md_theme_light_onPrimary) },
 
-            topBar = {
-                TopAppBar(
-                    title = {Text("History") },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = TopAppBarColor)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = md_theme_light_primary,
+                    scrolledContainerColor = md_theme_light_onPrimary
                 )
-            },
+            )
+        },
 
-            bottomBar = {
-            BottomAppBar {
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier,
+                containerColor = md_theme_light_surface,
+                contentColor = md_theme_light_primary
+
+            ) {
                 IconButton(
                     onClick = { navController.navigate("home") },
                     modifier = Modifier.weight(1f)
@@ -54,6 +69,7 @@ fun HistoryScreen(navController: NavController){
                     Icon(Icons.Filled.Home, contentDescription = "Home")
                 }
 
+                // History Icon
                 IconButton(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
@@ -61,13 +77,20 @@ fun HistoryScreen(navController: NavController){
                     Icon(Icons.Filled.DateRange, contentDescription = "History")
                 }
 
+                // Add Expense (Floating Action Button)
                 FloatingActionButton(
                     onClick = { navController.navigate("addExpense") },
-                    modifier = Modifier.size(56.dp)
+                    modifier = Modifier
+                        .size(56.dp)
+                        .align(Alignment.CenterVertically)
+                        .padding(0.dp),
+                    containerColor = md_theme_light_primary,
+                    contentColor = md_theme_light_onPrimary
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                 }
 
+                // Map Icon
                 IconButton(
                     onClick = { navController.navigate("map") },
                     modifier = Modifier.weight(1f)
@@ -75,6 +98,7 @@ fun HistoryScreen(navController: NavController){
                     Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                 }
 
+                // Profile Icon
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
@@ -82,7 +106,9 @@ fun HistoryScreen(navController: NavController){
                     Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
                 }
             }
-        }){innerPadding ->
+        },
+        containerColor = md_theme_light_surface
+    ){innerPadding ->
             Text("Test", modifier = Modifier.padding(innerPadding)
                 .fillMaxSize()
                 .wrapContentWidth(Alignment.CenterHorizontally)

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +34,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.pennytrack.ui.theme.TopAppBarColor
+import com.example.pennytrack.ui.theme.md_theme_dark_primaryContainer
+import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
+import com.example.pennytrack.ui.theme.md_theme_light_onPrimaryContainer
+import com.example.pennytrack.ui.theme.md_theme_light_onSurface
+import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
+import com.example.pennytrack.ui.theme.md_theme_light_primary
+import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
+import com.example.pennytrack.ui.theme.md_theme_light_surface
+import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,16 +50,14 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
-    // Image Picker Launcher
     var profileBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
     ) { bitmap: Bitmap? ->
-        profileBitmap = bitmap // Save captured image
+        profileBitmap = bitmap
     }
-
-    var showSettingsDialog by remember { mutableStateOf(false) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -66,39 +74,58 @@ fun ProfileScreen(navController: NavController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Profile") },
+                    title = { Text("Profile",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = md_theme_light_onPrimary) },
+
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = TopAppBarColor
+                        containerColor = md_theme_light_primary,
+                        scrolledContainerColor = md_theme_light_onPrimary
                     ),
                     actions = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Filled.Menu, contentDescription = "Open Menu")
+                            Icon(
+                                Icons.Filled.Menu,
+                                contentDescription = "Menu",
+                                tint = md_theme_light_onPrimary
+                            )
                         }
                     }
                 )
             },
+
             bottomBar = {
-                BottomAppBar {
-                    IconButton(onClick = { navController.navigate("home") }, modifier = Modifier.weight(1f)) {
+                BottomAppBar(
+                    containerColor = md_theme_light_surface,
+                    contentColor = md_theme_light_primary
+                ) {
+                    IconButton(onClick = { navController.navigate("home") },
+                        modifier = Modifier.weight(1f)) {
                         Icon(Icons.Filled.Home, contentDescription = "Home")
                     }
 
-                    IconButton(onClick = { navController.navigate("history") }, modifier = Modifier.weight(1f)) {
+                    IconButton(onClick = { navController.navigate("history") },
+                        modifier = Modifier.weight(1f)) {
                         Icon(Icons.Filled.DateRange, contentDescription = "History")
                     }
 
                     FloatingActionButton(
                         onClick = { navController.navigate("addExpense") },
-                        modifier = Modifier.size(56.dp)
+                        modifier = Modifier.size(56.dp),
+                        containerColor = md_theme_light_primary,
+                        contentColor = md_theme_light_onPrimary
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                     }
 
-                    IconButton(onClick = { navController.navigate("map") }, modifier = Modifier.weight(1f)) {
+                    IconButton(onClick = { navController.navigate("map") },
+                        modifier = Modifier.weight(1f)) {
                         Icon(Icons.Filled.LocationOn, contentDescription = "Map")
                     }
 
-                    IconButton(onClick = { navController.navigate("profile") }, modifier = Modifier.weight(1f)) {
+                    IconButton(onClick = { navController.navigate("profile") },
+                        modifier = Modifier.weight(1f)) {
                         Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
                     }
                 }
@@ -108,27 +135,25 @@ fun ProfileScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(16.dp),
+                    .background(md_theme_light_surface)
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Welcome message
                 Text(
-                    text = "Welcome, Thant Zin Min!",
-                    fontSize = 24.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    text = "Thant Zin Min",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = md_theme_light_onSurface
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // Profile Image Box
                 Box(
                     modifier = Modifier
                         .size(120.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
-                        .clickable { launcher.launch() }, // Opens the camera
+                        .background(md_theme_light_primaryContainer)
+                        .border(2.dp, md_theme_light_primary, CircleShape)
+                        .clickable { launcher.launch() },
                     contentAlignment = Alignment.Center
                 ) {
                     if (profileBitmap != null) {
@@ -139,46 +164,48 @@ fun ProfileScreen(navController: NavController) {
                         )
                     } else {
                         Text(
-                            text = "T", // Placeholder (e.g., First letter of name)
-                            fontSize = 40.sp,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
+                            text = "T",
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = md_theme_light_onPrimaryContainer
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Upload Photo", style = MaterialTheme.typography.bodyMedium)
-                Text(text = "⭐ Daily expenses ⭐", color = Color.Gray)
+                Spacer(modifier = Modifier.height(32.dp))
 
-                Spacer(modifier = Modifier.height(16.dp))
+                ProfileDetailCard(
+                    details = listOf(
+                        "Birthday" to "04/06/2004",
+                        "Income" to "50,000",
+                        "Expected Outcome" to "30,000"
+                    )
+                )
 
-                // Profile Details
-                ProfileDetail(label = "Name", value = "Thant Zin Min")
-                ProfileDetail(label = "Birthday", value = "04/06/2004")
-                ProfileDetail(label = "Income", value = "50,000")
-                ProfileDetail(label = "Expected Outcome", value = "30,000")
+                Spacer(modifier = Modifier.height(24.dp))
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-//                // Back to Home Button
-//                Button(
-//                    onClick = { navController.navigate("home") },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text("Back to Home")
-//                }
-
-                //Spacer(modifier = Modifier.height(8.dp))
-
-                // Edit Profile Button
-                ButtonPanel()
+                Button(
+                    onClick = { /* Edit Profile Action */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = md_theme_light_primary,
+                        contentColor = md_theme_light_onPrimary
+                    ),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Edit Profile")
+                }
             }
         }
+
     }
-
-
-    // Show Settings Dialog
     if (showSettingsDialog) {
         SettingsDialog(
             showDialog = showSettingsDialog,
@@ -190,50 +217,36 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun ProfileDetail(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .padding(8.dp)
-            .border(1.dp, Color.Gray, shape = MaterialTheme.shapes.small)
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+private fun ProfileDetailCard(details: List<Pair<String, String>>) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = md_theme_light_surfaceVariant
+        ),
+        shape = MaterialTheme.shapes.medium
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
-        Text(text = value, color = Color.DarkGray)
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-fun ButtonPanel() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(16.dp)  // Add padding for better spacing
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ElevatedButton(
-            onClick = { /* Edit Action */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),  // Adjust the button height
-            shape = MaterialTheme.shapes.medium,  // Rounded corners
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            elevation = ButtonDefaults.elevatedButtonElevation(8.dp)  // Elevation for depth
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Edit,  // Use the "Edit" icon
-                contentDescription = "Edit",
-                modifier = Modifier.size(20.dp)  // Adjust the icon size
-            )
-            Spacer(modifier = Modifier.width(8.dp))  // Space between icon and text
-            Text("Edit", style = MaterialTheme.typography.bodyLarge)  // Button text
+            details.forEach { (label, value) ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = label,
+                        color = md_theme_light_onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = value,
+                        color = md_theme_light_onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
