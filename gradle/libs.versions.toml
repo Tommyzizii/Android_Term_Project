@@ -1,5 +1,7 @@
 [versions]
 agp = "8.7.3"
+compose = "1.11.0"
+composeVersion = "1.9.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -9,7 +11,9 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 navigationCompose = "2.8.6"
+patrykandpatrickCompose = "1.10.0"
 vicoVersion = "2.0.1"
+runner = "1.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -17,6 +21,9 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 compose = { module = "com.patrykandpatrick.vico:compose", version.ref = "vicoVersion" }
 compose-m2 = { module = "com.patrykandpatrick.vico:compose-m2", version.ref = "vicoVersion" }
 compose-m3 = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vicoVersion" }
+compose-v1100 = { module = "com.patrykandpatrick.vico:compose", version.ref = "patrykandpatrickCompose" }
+compose-v1110 = { module = "com.patrykandpatrick.vico:compose", version.ref = "compose" }
+compose-v190 = { module = "com.patrykandpatrick.vico:compose", version.ref = "composeVersion" }
 core = { module = "com.patrykandpatrick.vico:core", version.ref = "vicoVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -32,6 +39,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 views = { module = "com.patrykandpatrick.vico:views", version.ref = "vicoVersion" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
