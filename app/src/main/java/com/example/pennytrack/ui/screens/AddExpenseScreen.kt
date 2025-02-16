@@ -3,6 +3,9 @@ package com.example.pennytrack.ui.screens
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -35,6 +38,18 @@ fun AddExpenseScreen(
     var expenseDescription by remember { mutableStateOf("") }
     var expenseDate by remember { mutableStateOf("") }
     var expenseTime by remember { mutableStateOf("") }
+
+    val expenseTypes = remember {
+        listOf(
+            "Education",
+            "Groceries",
+            "Transportation",
+            "Dining Out",
+            "Entertainment",
+            "Shopping",
+            "Utilities"
+        )
+    }
 
     val calendar = Calendar.getInstance()
 
@@ -154,17 +169,49 @@ fun AddExpenseScreen(
                         singleLine = true
                     )
 
-                    OutlinedTextField(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        value = expenseDescription,
-                        onValueChange = { expenseDescription = it },
-                        label = { Text("Description") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = md_theme_light_primary,
-                            unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
-                        ),
-                        minLines = 2
-                    )
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = expenseDescription,
+                            onValueChange = { expenseDescription = it },
+                            label = { Text("Description") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = md_theme_light_primary,
+                                unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                            ),
+                            minLines = 2
+                        )
+
+                        LazyRow (
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth().padding(8.dp),
+                            state = rememberLazyListState(),
+                            contentPadding = PaddingValues(horizontal = 8.dp)
+
+                        ) {
+                            items(expenseTypes) {
+                                expenseType -> SuggestionChip(
+                                    onClick = {expenseDescription = expenseType},
+                                    label = { Text(expenseType) },
+                                    colors = SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = if (expenseDescription == expenseType){
+                                            md_theme_light_primaryContainer
+                                        } else{
+                                            md_theme_light_surface
+                                        }
+                                    ),
+                                    border = SuggestionChipDefaults.suggestionChipBorder(
+                                        enabled = true,
+                                        borderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                                    ),
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 

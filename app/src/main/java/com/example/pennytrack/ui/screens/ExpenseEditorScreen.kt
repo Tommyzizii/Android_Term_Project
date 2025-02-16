@@ -6,6 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -54,6 +57,18 @@ fun EditExpenseDialog(
     var editedDate by rememberSaveable { mutableStateOf(expense.date) }
     var editedTime by rememberSaveable { mutableStateOf(expense.time) }
 
+    val expenseTypes = remember {
+        listOf(
+            "Education",
+            "Groceries",
+            "Transportation",
+            "Dining Out",
+            "Entertainment",
+            "Shopping",
+            "Utilities"
+        )
+    }
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -101,7 +116,9 @@ fun EditExpenseDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedTextField(
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) { OutlinedTextField(
                     value = editedDescription,
                     onValueChange = { editedDescription = it },
                     label = { Text("Description") },
@@ -111,6 +128,33 @@ fun EditExpenseDialog(
                         focusedLabelColor = md_theme_light_primary
                     )
                 )
+                    LazyRow (
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        state = rememberLazyListState(),
+                        contentPadding = PaddingValues(horizontal = 8.dp)
+
+                    ) {
+                        items(expenseTypes) {
+                                expenseType -> SuggestionChip(
+                            onClick = {editedDescription = expenseType},
+                            label = { Text(expenseType) },
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = if (editedDescription == expenseType){
+                                    md_theme_light_primaryContainer
+                                } else{
+                                    md_theme_light_surface
+                                }
+                            ),
+                            border = SuggestionChipDefaults.suggestionChipBorder(
+                                enabled = true,
+                                borderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                            ),
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                        }
+                    }
+                }
 
                 Row(
                     modifier = Modifier
