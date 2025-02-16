@@ -41,7 +41,7 @@ fun MyApp() {
             HomeScreen(navController, expenseViewModel)  // Pass ViewModel to HomeScreen
         }
         composable("history"){
-            HistoryScreen(navController)
+            HistoryScreen(navController, expenseViewModel)
         }
         composable("addExpense") {
             AddExpenseScreen(navController, expenseViewModel)  // Pass ViewModel to AddExpenseScreen

@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // Jetpack Compose Navigation
-    implementation(libs.androidx.navigation.compose)  // Add this line
+    implementation(libs.androidx.navigation.compose)
 
     // Testing dependencies
     testImplementation(libs.junit)
