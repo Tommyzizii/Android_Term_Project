@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.ui.screens.AddExpenseScreen
-import com.example.pennytrack.ui.screens.HistoryScreen
+import com.example.pennytrack.ui.screens.ChartScreen
 import com.example.pennytrack.ui.screens.HomeScreen
 import com.example.pennytrack.ui.screens.MapScreen
 import com.example.pennytrack.ui.screens.ProfileScreen
@@ -40,8 +40,8 @@ fun MyApp() {
         composable("home") {
             HomeScreen(navController, expenseViewModel)  // Pass ViewModel to HomeScreen
         }
-        composable("history"){
-            HistoryScreen(navController, expenseViewModel)
+        composable("chart"){
+            ChartScreen(navController, expenseViewModel)
         }
         composable("addExpense") {
             AddExpenseScreen(navController, expenseViewModel)  // Pass ViewModel to AddExpenseScreen

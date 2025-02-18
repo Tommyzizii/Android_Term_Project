@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -125,10 +127,11 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
 
                     // History Icon
                     IconButton(
-                        onClick = { navController.navigate("history") },
+                        onClick = { navController.navigate("chart") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "History")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                            contentDescription = "Chart")
                     }
 
                     // Add Expense (Floating Action Button)

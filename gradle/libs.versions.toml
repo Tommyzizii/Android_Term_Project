@@ -10,6 +10,7 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2024.04.01"
+materialIconsExtended = "1.7.8"
 navigationCompose = "2.8.6"
 patrykandpatrickCompose = "1.10.0"
 vicoVersion = "2.0.1"
@@ -17,6 +18,7 @@ runner = "1.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 compose = { module = "com.patrykandpatrick.vico:compose", version.ref = "vicoVersion" }
 compose-m2 = { module = "com.patrykandpatrick.vico:compose-m2", version.ref = "vicoVersion" }

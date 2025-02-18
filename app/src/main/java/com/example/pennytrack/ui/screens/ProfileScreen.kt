@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -104,9 +106,11 @@ fun ProfileScreen(navController: NavController) {
                         Icon(Icons.Filled.Home, contentDescription = "Home")
                     }
 
-                    IconButton(onClick = { navController.navigate("history") },
-                        modifier = Modifier.weight(1f)) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    IconButton(onClick = { navController.navigate("chart") },
+                        modifier = Modifier.weight(1f))
+                    {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                            contentDescription = "Chart")
                     }
 
                     FloatingActionButton(

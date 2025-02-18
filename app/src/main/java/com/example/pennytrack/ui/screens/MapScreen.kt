@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,10 +74,11 @@ fun MapScreen(navController: NavController) {
 
                 // History Icon
                 IconButton(
-                    onClick = { navController.navigate("history") },
+                    onClick = { navController.navigate("chart") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                        contentDescription = "Chart")
                 }
 
                 // Add Expense (Floating Action Button)

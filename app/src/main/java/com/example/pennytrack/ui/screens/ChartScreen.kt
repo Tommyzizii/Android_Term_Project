@@ -8,25 +8,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,19 +58,14 @@ import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.component.shape.Shapes
 //import com.patrykandpatrick.vico.compose.chart.line.LinChart
-import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.entryModelOf
 import java.text.NumberFormat
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(
+fun ChartScreen(
     navController: NavController,
     expenseViewModel: ExpenseViewModel = viewModel()
 ) {
@@ -85,16 +80,19 @@ fun HistoryScreen(
             }
     }
 
+    //Data Entries
     val chartEntries = remember(expensesByType) {
         expensesByType.entries.mapIndexed { index, (type, amount) ->
             ExpenseChartEntry(index.toFloat(), amount, type)
         }
     }
 
+    //XLabel
     val xAxisFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ ->
         chartEntries.getOrNull(x.toInt())?.type ?: ""
     }
 
+    //YLabel
     val yAxisFormatter = AxisValueFormatter<AxisPosition.Vertical.Start> { y, _ ->
         NumberFormat.getCurrencyInstance(Locale.US).format(y)
     }
@@ -115,7 +113,7 @@ fun HistoryScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "History",
+                        "Daily Chart",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = md_theme_light_onPrimary
@@ -145,12 +143,12 @@ fun HistoryScreen(
 
                 // History Icon
                 IconButton(
-                    onClick = { navController.navigate("history") },
+                    onClick = { navController.navigate("chart") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
-                        Icons.Filled.DateRange, contentDescription = "History",
-                        tint = md_theme_light_primary
+                        imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                        contentDescription = "Chart",
                     )
                 }
 
@@ -201,7 +199,7 @@ fun HistoryScreen(
                 )
             ) {
                 Text(
-                    text = "Total Expenses: $${expenses.sumOf { it.amount.toDouble() }}",
+                    text = "Total Daily Expenses: $${expenses.sumOf { it.amount.toDouble() }}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -220,25 +218,38 @@ fun HistoryScreen(
                     containerColor = md_theme_light_surfaceVariant
                 )
             ) {
-                Chart(
-                    chart = lineChart(),
-                    model = chartEntryModelProducer.getModel(),
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
-                    startAxis = rememberStartAxis(
-                        valueFormatter = yAxisFormatter,
-                        label = textComponent(
-                            color = md_theme_light_onSurfaceVariant,
-                            textSize = 12.sp
-                        )
-                    ),
-                    bottomAxis = rememberBottomAxis(
-                        valueFormatter = xAxisFormatter,
-                        label = textComponent(
-                            color = md_theme_light_onSurfaceVariant,
-                            textSize = 12.sp
+                Column (
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                ){
+                    Text(
+                        text = "Expense Breakdown",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = md_theme_light_onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    Chart(
+                        chart = lineChart(),
+                        model = chartEntryModelProducer.getModel(),
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        startAxis = rememberStartAxis(
+                            valueFormatter = yAxisFormatter,
+                            label = textComponent(
+                                color = md_theme_light_onSurfaceVariant,
+                                textSize = 12.sp
+                            )
+                        ),
+                        bottomAxis = rememberBottomAxis(
+                            valueFormatter = xAxisFormatter,
+                            label = textComponent(
+                                color = md_theme_light_onSurfaceVariant,
+                                textSize = 12.sp
+                            )
                         )
                     )
-                )
+
+                }
             }
 
             // Expense Type Legend
