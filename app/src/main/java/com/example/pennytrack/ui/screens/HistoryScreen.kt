@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import androidx.navigation.NavController
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.pennytrack.ui.theme.md_theme_light_primary
+import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
 import com.example.pennytrack.ui.theme.md_theme_light_surface
 import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 import com.example.pennytrack.viewmodels.ExpenseViewModel
@@ -53,6 +55,7 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.chart.line.LineChart
@@ -70,7 +73,7 @@ import java.util.Locale
 fun HistoryScreen(
     navController: NavController,
     expenseViewModel: ExpenseViewModel = viewModel()
-){
+) {
 
     val expenses by expenseViewModel.expenses.collectAsState()
 
@@ -99,13 +102,25 @@ fun HistoryScreen(
     val chartEntryModelProducer = remember { ChartEntryModelProducer() }
     chartEntryModelProducer.setEntries(chartEntries)
 
+    val chartColors = remember {
+        listOf(
+            md_theme_light_primary.toArgb(),
+            md_theme_light_primaryContainer.toArgb(),
+            Color(0xFF5B9A5C).toArgb()  // A midtone green that fits with your palette
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("History",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = md_theme_light_onPrimary) },
+                title = {
+                    Text(
+                        "History",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = md_theme_light_onPrimary
+                    )
+                },
 
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = md_theme_light_primary,
@@ -133,7 +148,10 @@ fun HistoryScreen(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    Icon(
+                        Icons.Filled.DateRange, contentDescription = "History",
+                        tint = md_theme_light_primary
+                    )
                 }
 
                 // Add Expense (Floating Action Button)
@@ -167,14 +185,14 @@ fun HistoryScreen(
             }
         },
         containerColor = md_theme_light_surface
-    ){innerPadding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
             // Total Expenses Card
-            Card (
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -205,29 +223,59 @@ fun HistoryScreen(
                 Chart(
                     chart = lineChart(),
                     model = chartEntryModelProducer.getModel(),
-                    modifier = Modifier.fillMaxSize().padding(16.dp) ,
-                    startAxis = rememberStartAxis(valueFormatter = yAxisFormatter),
-                    bottomAxis = rememberBottomAxis(valueFormatter = xAxisFormatter)
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    startAxis = rememberStartAxis(
+                        valueFormatter = yAxisFormatter,
+                        label = textComponent(
+                            color = md_theme_light_onSurfaceVariant,
+                            textSize = 12.sp
+                        )
+                    ),
+                    bottomAxis = rememberBottomAxis(
+                        valueFormatter = xAxisFormatter,
+                        label = textComponent(
+                            color = md_theme_light_onSurfaceVariant,
+                            textSize = 12.sp
+                        )
+                    )
                 )
             }
 
             // Expense Type Legend
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+            LazyColumn {
                 items(expensesByType.entries.toList()) { (type, amount) ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = type,
-                            color = md_theme_light_onSurfaceVariant
-                        )
+                        Row(
+                            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Circle color indicator
+                            androidx.compose.foundation.Canvas(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .padding(end = 4.dp)
+                            ) {
+                                // Use primary or primaryContainer color based on index
+                                val colorIndex = expensesByType.entries.toList()
+                                    .indexOf(expensesByType.entries.find { it.key == type })
+                                val dotColor = when (colorIndex % 3) {
+                                    0 -> md_theme_light_primary
+                                    1 -> md_theme_light_primaryContainer
+                                    else -> Color(0xFF5B9A5C)
+                                }
+                                drawCircle(color = dotColor)
+                            }
+                            Text(
+                                text = type,
+                                color = md_theme_light_onSurfaceVariant
+                            )
+                        }
                         Text(
                             text = "$${String.format("%.2f", amount)}",
                             color = md_theme_light_primary,
