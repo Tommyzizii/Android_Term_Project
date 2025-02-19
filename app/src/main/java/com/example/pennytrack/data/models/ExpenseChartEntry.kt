@@ -1,4 +1,4 @@
-package com.example.pennytrack.ui.screens
+package com.example.pennytrack.data.models
 
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 
