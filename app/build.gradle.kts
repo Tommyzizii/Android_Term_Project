@@ -56,6 +56,7 @@ dependencies {
     // Jetpack Compose Navigation
     implementation(libs.androidx.navigation.compose)
 
+    //Chart
     implementation(libs.compose.v1110)
     implementation(libs.compose.v190)
     implementation(libs.compose.v1100)
@@ -64,6 +65,7 @@ dependencies {
 
     //Icon
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.play.services.maps)
 
     // Testing dependencies
     testImplementation(libs.junit)

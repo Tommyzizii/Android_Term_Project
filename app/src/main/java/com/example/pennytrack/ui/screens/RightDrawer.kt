@@ -132,7 +132,7 @@ fun RightDrawerContent(
             selected = false,
             onClick = {
                 scope.launch { drawerState.close() }
-                // I want to navigate to new screen.
+                navController.navigate("bankLocations")
             },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = md_theme_light_surface,

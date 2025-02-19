@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.ui.screens.AddExpenseScreen
+import com.example.pennytrack.ui.screens.BankLocations
 import com.example.pennytrack.ui.screens.ChartScreen
 import com.example.pennytrack.ui.screens.HomeScreen
 import com.example.pennytrack.ui.screens.MonthlyExpenseScreen
@@ -51,6 +52,9 @@ fun MyApp() {
         }
         composable("profile"){
             ProfileScreen(navController)
+        }
+        composable("bankLocations"){
+            BankLocations(navController)
         }
     }
 }
