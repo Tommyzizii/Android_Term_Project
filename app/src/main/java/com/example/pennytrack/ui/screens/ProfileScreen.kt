@@ -122,9 +122,9 @@ fun ProfileScreen(navController: NavController) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                     }
 
-                    IconButton(onClick = { navController.navigate("map") },
+                    IconButton(onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)) {
-                        Icon(Icons.Filled.LocationOn, contentDescription = "Map")
+                        Icon(Icons.Filled.DateRange, contentDescription = "History")
                     }
 
                     IconButton(onClick = { navController.navigate("profile") },

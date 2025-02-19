@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.ui.screens.AddExpenseScreen
 import com.example.pennytrack.ui.screens.ChartScreen
 import com.example.pennytrack.ui.screens.HomeScreen
-import com.example.pennytrack.ui.screens.MapScreen
+import com.example.pennytrack.ui.screens.MonthlyExpenseScreen
 import com.example.pennytrack.ui.screens.ProfileScreen
 import com.example.pennytrack.ui.theme.PennyTrackTheme
 import com.example.pennytrack.viewmodels.ExpenseViewModel
@@ -46,8 +46,8 @@ fun MyApp() {
         composable("addExpense") {
             AddExpenseScreen(navController, expenseViewModel)  // Pass ViewModel to AddExpenseScreen
         }
-        composable("map"){
-            MapScreen(navController)
+        composable("history"){
+            MonthlyExpenseScreen(navController)
         }
         composable("profile"){
             ProfileScreen(navController)

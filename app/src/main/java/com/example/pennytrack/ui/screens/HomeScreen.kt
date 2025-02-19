@@ -125,7 +125,6 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         Icon(Icons.Filled.Home, contentDescription = "Home")
                     }
 
-                    // History Icon
                     IconButton(
                         onClick = { navController.navigate("chart") },
                         modifier = Modifier.weight(1f)
@@ -134,7 +133,6 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                             contentDescription = "Chart")
                     }
 
-                    // Add Expense (Floating Action Button)
                     FloatingActionButton(
                         onClick = { navController.navigate("addExpense") },
                         modifier = Modifier
@@ -147,15 +145,13 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                     }
 
-                    // Map Icon
                     IconButton(
-                        onClick = { navController.navigate("map") },
+                        onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.LocationOn, contentDescription = "Map")
+                        Icon(Icons.Filled.DateRange, contentDescription = "History")
                     }
 
-                    // Profile Icon
                     IconButton(
                         onClick = { navController.navigate("profile") },
                         modifier = Modifier.weight(1f)

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddLocation
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
@@ -111,6 +113,37 @@ fun RightDrawerContent(
                 selectedTextColor = md_theme_light_onSurface
             ),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+        )
+
+        NavigationDrawerItem(
+            icon = {
+                Icon(
+                    Icons.Filled.LocationOn,
+                    contentDescription = "Bank Locations",
+                    tint = md_theme_light_primary
+                )
+            },
+            label = {
+                Text(
+                    "Bank Locations",
+                    color = md_theme_light_onSurface
+                )
+            },
+            selected = false,
+            onClick = {
+                scope.launch { drawerState.close() }
+                // I want to navigate to new screen.
+            },
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = md_theme_light_surface,
+                selectedContainerColor = md_theme_light_primaryContainer,
+                unselectedIconColor = md_theme_light_primary,
+                unselectedTextColor = md_theme_light_onSurface,
+                selectedIconColor = md_theme_light_primary,
+                selectedTextColor = md_theme_light_onSurface
+            ),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+
         )
     }
 }

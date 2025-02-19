@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.BottomAppBar
@@ -138,7 +139,6 @@ fun ChartScreen(
                     Icon(Icons.Filled.Home, contentDescription = "Home")
                 }
 
-                // History Icon
                 IconButton(
                     onClick = { navController.navigate("chart") },
                     modifier = Modifier.weight(1f)
@@ -149,7 +149,6 @@ fun ChartScreen(
                     )
                 }
 
-                // Add Expense (Floating Action Button)
                 FloatingActionButton(
                     onClick = { navController.navigate("addExpense") },
                     modifier = Modifier
@@ -162,15 +161,13 @@ fun ChartScreen(
                     Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                 }
 
-                // Map Icon
                 IconButton(
-                    onClick = { navController.navigate("map") },
+                    onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.LocationOn, contentDescription = "Map")
+                    Icon(Icons.Filled.DateRange, contentDescription = "History")
                 }
 
-                // Profile Icon
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
