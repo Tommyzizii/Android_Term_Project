@@ -1,4 +1,4 @@
-package com.example.pennytrack.ui.screens
+package com.example.pennytrack.view
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog

@@ -17,6 +17,10 @@ navigationCompose = "2.8.6"
 patrykandpatrickCompose = "1.10.0"
 playServicesLocation = "21.3.0"
 playServicesMapsVersion = "18.2.0"
+roomCompiler = "2.6.0"
+roomKtx = "2.6.0"
+roomRuntime = "2.6.1"
+roomRuntimeVersion = "2.6.0"
 vicoVersion = "2.0.1"
 runner = "1.6.1"
 playServicesMaps = "19.0.0"
@@ -25,6 +29,12 @@ playServicesMaps = "19.0.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-compiler-v260 = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-ktx-v260 = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-room-runtime-v260 = { module = "androidx.room:room-runtime", version.ref = "roomRuntimeVersion" }
 compose = { module = "com.patrykandpatrick.vico:compose", version.ref = "vicoVersion" }
 compose-m2 = { module = "com.patrykandpatrick.vico:compose-m2", version.ref = "vicoVersion" }
 compose-m3 = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vicoVersion" }

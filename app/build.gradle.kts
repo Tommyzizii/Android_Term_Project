@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -66,6 +67,11 @@ dependencies {
     //Icon
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.play.services.maps)
+
+    //Room
+    implementation(libs.androidx.room.runtime.v260)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx.v260)
 
     // Testing dependencies
     testImplementation(libs.junit)

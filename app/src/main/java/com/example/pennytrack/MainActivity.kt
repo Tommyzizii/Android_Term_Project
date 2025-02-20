@@ -5,18 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.pennytrack.ui.screens.AddExpenseScreen
-import com.example.pennytrack.ui.screens.BankLocations
-import com.example.pennytrack.ui.screens.ChartScreen
-import com.example.pennytrack.ui.screens.HomeScreen
-import com.example.pennytrack.ui.screens.MonthlyExpenseScreen
-import com.example.pennytrack.ui.screens.ProfileScreen
+import com.example.pennytrack.view.AddExpenseScreen
+import com.example.pennytrack.view.BankLocations
+import com.example.pennytrack.view.ChartScreen
+import com.example.pennytrack.view.HomeScreen
+import com.example.pennytrack.view.MonthlyExpenseScreen
+import com.example.pennytrack.view.ProfileScreen
 import com.example.pennytrack.ui.theme.PennyTrackTheme
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 
