@@ -1,5 +1,6 @@
 package com.example.pennytrack.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -39,4 +40,5 @@ interface ExpenseDao {
 
     @Query("SELECT DISTINCT substr(date, 4) AS monthYear, SUM(amount) as total FROM expenses GROUP BY monthYear ORDER BY substr(monthYear, 4) DESC, substr(monthYear, 1, 2) DESC")
     fun getMonthlyTotals(): Flow<List<MonthlyTotal>>
+
 }

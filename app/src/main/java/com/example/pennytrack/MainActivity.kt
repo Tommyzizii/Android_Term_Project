@@ -1,5 +1,6 @@
 package com.example.pennytrack
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,9 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.pennytrack.view.AddExpenseScreen
 import com.example.pennytrack.view.BankLocations
 import com.example.pennytrack.view.ChartScreen
@@ -17,6 +20,7 @@ import com.example.pennytrack.view.HomeScreen
 import com.example.pennytrack.view.MonthlyExpenseScreen
 import com.example.pennytrack.view.ProfileScreen
 import com.example.pennytrack.ui.theme.PennyTrackTheme
+import com.example.pennytrack.view.MonthlyDetailScreen
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 
 class MainActivity : ComponentActivity() {
@@ -47,7 +51,15 @@ fun MyApp() {
             AddExpenseScreen(navController, expenseViewModel)  // Pass ViewModel to AddExpenseScreen
         }
         composable("history"){
-            MonthlyExpenseScreen(navController)
+            MonthlyExpenseScreen(navController, expenseViewModel)
+        }
+        composable(
+            route = "month_detail/{monthYear}",
+            arguments = listOf(navArgument("monthYear") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val encodedMonthYear = backStackEntry.arguments?.getString("monthYear") ?: ""
+            val monthYear = Uri.decode(encodedMonthYear)
+            MonthlyDetailScreen(navController, expenseViewModel, monthYear)
         }
         composable("profile"){
             ProfileScreen(navController)

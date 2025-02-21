@@ -12,9 +12,11 @@ import com.example.pennytrack.data.models.MonthlyTotal
 import com.example.pennytrack.repository.ExpenseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -152,5 +154,88 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
         return repository.getTotalExpenseForMonth(monthYear)
             .map { it ?: 0f }
             .asLiveData()
+    }
+
+    // Function to get all expenses grouped by day for the current month
+    fun getExpensesGroupedByDayForCurrentMonth(): StateFlow<Map<String, List<Expense>>> {
+        return _monthlyExpenses.map { expenses ->
+            expenses.groupBy { it.date }
+                .toSortedMap(compareByDescending { it }) // Most recent first
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyMap()
+        )
+    }
+
+    // Function to get formatted month display name from MM/yyyy format
+    fun formatMonthYear(monthYear: String): String {
+        val dateParts = monthYear.split("/")
+        return if (dateParts.size == 2) {
+            val month = dateParts[0].toIntOrNull() ?: 1
+            val year = dateParts[1].toIntOrNull() ?: 2025
+
+            val calendar = java.util.Calendar.getInstance()
+            calendar.set(java.util.Calendar.MONTH, month - 1)
+            calendar.set(java.util.Calendar.YEAR, year)
+
+            SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(calendar.time)
+        } else {
+            monthYear
+        }
+    }
+
+    // Function to get daily totals for the current selected month
+    fun getDailyTotalsForCurrentMonth(): StateFlow<List<Pair<String, Float>>> {
+        return _monthlyExpenses.map { expenses ->
+            expenses.groupBy { it.date }
+                .map { (date, expensesForDay) ->
+                    Pair(date, expensesForDay.sumOf { it.amount.toDouble() }.toFloat())
+                }
+                .sortedByDescending { (date, _) -> date } // Most recent first
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+    }
+
+    // Format a date string from "dd/MM/yyyy" to "EEE, MMM d" (e.g., "Mon, Jan 15")
+    fun formatDateDisplay(dateString: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+            if (date != null) {
+                outputFormat.format(date)
+            } else {
+                dateString
+            }
+        } catch (e: Exception) {
+            dateString
+        }
+    }
+
+    // Check if a given month is the current month
+    fun isCurrentMonth(monthYear: String): Boolean {
+        return monthYear == getCurrentMonth()
+    }
+
+    // Get total number of expenses for a month
+    fun getExpenseCountForMonth(monthYear: String): LiveData<Int> {
+        return repository.getExpensesByMonth(monthYear)
+            .map { it.size }
+            .asLiveData()
+    }
+
+    // Get current month with formatted display name
+    fun getCurrentMonthFormatted(): StateFlow<Pair<String, String>> {
+        return _currentMonth.map { monthYear ->
+            Pair(monthYear, formatMonthYear(monthYear))
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            Pair(getCurrentMonth(), formatMonthYear(getCurrentMonth()))
+        )
     }
 }
