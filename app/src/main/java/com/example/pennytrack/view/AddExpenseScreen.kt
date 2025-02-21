@@ -20,23 +20,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import com.example.pennytrack.data.models.Expense
-import com.example.pennytrack.ui.theme.md_theme_light_onPrimaryContainer
-import com.example.pennytrack.ui.theme.md_theme_light_primary
-import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
-import com.example.pennytrack.ui.theme.md_theme_light_surface
-import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
+import com.example.pennytrack.ui.theme.*
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(
     navController: NavController,
-    expenseViewModel: ExpenseViewModel = viewModel()
+    expenseViewModel: ExpenseViewModel
 ) {
     var expenseTitle by remember { mutableStateOf("") }
     var expenseAmount by remember { mutableStateOf("") }
     var expenseDescription by remember { mutableStateOf("") }
-    var expenseDate by remember { mutableStateOf("") }
+    var expenseDate by remember { mutableStateOf(expenseViewModel.getTodayDate()) } // Default to today
     var expenseTime by remember { mutableStateOf("") }
 
     val expenseTypes = remember {
@@ -52,6 +48,18 @@ fun AddExpenseScreen(
     }
 
     val calendar = Calendar.getInstance()
+
+    // Parse the current date
+    val dateComponents = expenseDate.split("/")
+    if (dateComponents.size == 3) {
+        try {
+            calendar.set(Calendar.DAY_OF_MONTH, dateComponents[0].toInt())
+            calendar.set(Calendar.MONTH, dateComponents[1].toInt() - 1)
+            calendar.set(Calendar.YEAR, dateComponents[2].toInt())
+        } catch (e: Exception) {
+            // Use current date if parsing fails
+        }
+    }
 
     val datePickerDialog = DatePickerDialog(
         navController.context,
@@ -72,6 +80,14 @@ fun AddExpenseScreen(
         calendar.get(Calendar.MINUTE),
         true
     )
+
+    // Set current time by default
+    LaunchedEffect(Unit) {
+        expenseTime = String.format("%02d:%02d",
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE)
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -132,7 +148,6 @@ fun AddExpenseScreen(
                     ),
                     singleLine = true
                 )
-
             }
 
             Text("Amount & Description", modifier = Modifier.fillMaxWidth()
@@ -153,18 +168,14 @@ fun AddExpenseScreen(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-
                     OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         value = expenseAmount,
                         onValueChange = { expenseAmount = it },
                         label = { Text("Amount ($)") },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = md_theme_light_primary,
-                            unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f),
-                            //focusedLabelColor = MaterialTheme.colorScheme.primary,
-                            //unfocusedLabelColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                            unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
                         ),
                         singleLine = true
                     )
@@ -190,16 +201,15 @@ fun AddExpenseScreen(
                             modifier = Modifier.fillMaxWidth().padding(8.dp),
                             state = rememberLazyListState(),
                             contentPadding = PaddingValues(horizontal = 8.dp)
-
                         ) {
-                            items(expenseTypes) {
-                                expenseType -> SuggestionChip(
-                                    onClick = {expenseDescription = expenseType},
+                            items(expenseTypes) { expenseType ->
+                                SuggestionChip(
+                                    onClick = { expenseDescription = expenseType },
                                     label = { Text(expenseType) },
                                     colors = SuggestionChipDefaults.suggestionChipColors(
-                                        containerColor = if (expenseDescription == expenseType){
+                                        containerColor = if (expenseDescription == expenseType) {
                                             md_theme_light_primaryContainer
-                                        } else{
+                                        } else {
                                             md_theme_light_surface
                                         }
                                     ),
@@ -298,22 +308,25 @@ fun AddExpenseScreen(
 
                 Button(
                     onClick = {
-                        val newId = expenseViewModel.expenses.value.size + 1
-                        val expense = Expense(
-                            id = newId,
-                            title = expenseTitle,
-                            amount = expenseAmount.toFloatOrNull() ?: 0f,
-                            description = expenseDescription,
-                            date = expenseDate,
-                            time = expenseTime
-                        )
-                        expenseViewModel.addExpense(expense)
-                        navController.popBackStack()
+                        // Only proceed if title and amount are not empty
+                        if (expenseTitle.isNotBlank() && expenseAmount.isNotBlank()) {
+                            val expense = Expense(
+                                id = 0, // Let Room generate the ID
+                                title = expenseTitle,
+                                amount = expenseAmount.toFloatOrNull() ?: 0f,
+                                description = expenseDescription,
+                                date = expenseDate,
+                                time = expenseTime
+                            )
+                            expenseViewModel.addExpense(expense)
+                            navController.popBackStack()
+                        }
                     },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = md_theme_light_primary
-                    )
+                    ),
+                    enabled = expenseTitle.isNotBlank() && expenseAmount.isNotBlank()
                 ) {
                     Text("Add Expense")
                 }

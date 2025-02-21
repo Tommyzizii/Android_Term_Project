@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,6 +32,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +58,6 @@ import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-//import com.patrykandpatrick.vico.compose.chart.line.LinChart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import java.text.NumberFormat
 import java.util.Locale
@@ -64,10 +66,16 @@ import java.util.Locale
 @Composable
 fun ChartScreen(
     navController: NavController,
-    expenseViewModel: ExpenseViewModel = viewModel()
+    expenseViewModel: ExpenseViewModel
 ) {
-
+    // Observe today's expenses
     val expenses by expenseViewModel.expenses.collectAsState()
+
+    // Get current date to display
+    val currentDate by expenseViewModel.currentDate.collectAsState()
+
+    // Observe total expense for today
+    val totalDailyExpense by expenseViewModel.getTotalExpenseForDay(currentDate).observeAsState(0f)
 
     // Group expenses by type and calculate total amount for each type
     val expensesByType = remember(expenses) {
@@ -109,14 +117,32 @@ fun ChartScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        "Daily Chart",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = md_theme_light_onPrimary
-                    )
-                },
+                    Column {
+                        Text(
+                            "Expense Chart",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = md_theme_light_onPrimary
+                        )
 
+                        Text(
+                            currentDate, // Show formatted current date
+                            fontSize = 14.sp,
+                            color = md_theme_light_onPrimary.copy(alpha = 0.8f)
+                        )
+                    }
+
+                },
+                actions = {
+                    // Add refresh button to ensure today's data is shown
+                    IconButton(onClick = { expenseViewModel.refreshTodayExpenses() }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh Today's Data",
+                            tint = md_theme_light_onPrimary
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = md_theme_light_primary,
                     scrolledContainerColor = md_theme_light_onPrimary
@@ -182,7 +208,7 @@ fun ChartScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // Total Expenses Card
+            // Total Expenses Card - Now using the LiveData from ViewModel
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -191,14 +217,29 @@ fun ChartScreen(
                     containerColor = md_theme_light_surfaceVariant
                 )
             ) {
-                Text(
-                    text = "Total Daily Expenses: $${expenses.sumOf { it.amount.toDouble() }}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp)
-                )
+                Row (
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Today's Expenses",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier =  Modifier.padding(end = 32.dp)
+                    )
+
+                    Text(
+                        text = "$${String.format("%.2f", totalDailyExpense)}",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = md_theme_light_primary,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
             }
 
             // Expense Chart
@@ -211,80 +252,95 @@ fun ChartScreen(
                     containerColor = md_theme_light_surfaceVariant
                 )
             ) {
-                Column (
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
-                ){
-                    Text(
-                        text = "Expense Breakdown",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = md_theme_light_onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                if (expenses.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "No expenses recorded today",
+                            fontSize = 16.sp,
+                            color = md_theme_light_onSurfaceVariant
+                        )
+                    }
+                } else {
+                    Column (
+                        modifier = Modifier.fillMaxSize().padding(16.dp)
+                    ){
+                        Text(
+                            text = "Expense Breakdown",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = md_theme_light_onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
 
-                    Chart(
-                        chart = lineChart(),
-                        model = chartEntryModelProducer.getModel(),
-                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                        startAxis = rememberStartAxis(
-                            valueFormatter = yAxisFormatter,
-                            label = textComponent(
-                                color = md_theme_light_onSurfaceVariant,
-                                textSize = 12.sp
-                            )
-                        ),
-                        bottomAxis = rememberBottomAxis(
-                            valueFormatter = xAxisFormatter,
-                            label = textComponent(
-                                color = md_theme_light_onSurfaceVariant,
-                                textSize = 12.sp
+                        Chart(
+                            chart = lineChart(),
+                            model = chartEntryModelProducer.getModel(),
+                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            startAxis = rememberStartAxis(
+                                valueFormatter = yAxisFormatter,
+                                label = textComponent(
+                                    color = md_theme_light_onSurfaceVariant,
+                                    textSize = 12.sp
+                                )
+                            ),
+                            bottomAxis = rememberBottomAxis(
+                                valueFormatter = xAxisFormatter,
+                                label = textComponent(
+                                    color = md_theme_light_onSurfaceVariant,
+                                    textSize = 12.sp
+                                )
                             )
                         )
-                    )
-
+                    }
                 }
             }
 
             // Expense Type Legend
-            LazyColumn {
-                items(expensesByType.entries.toList()) { (type, amount) ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+            if (expenses.isNotEmpty()) {
+                LazyColumn {
+                    items(expensesByType.entries.toList()) { (type, amount) ->
                         Row(
-                            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Circle color indicator
-                            androidx.compose.foundation.Canvas(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .padding(end = 4.dp)
+                            Row(
+                                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Use primary or primaryContainer color based on index
-                                val colorIndex = expensesByType.entries.toList()
-                                    .indexOf(expensesByType.entries.find { it.key == type })
-                                val dotColor = when (colorIndex % 3) {
-                                    0 -> md_theme_light_primary
-                                    1 -> md_theme_light_primaryContainer
-                                    else -> Color(0xFF5B9A5C)
+                                // Circle color indicator
+                                androidx.compose.foundation.Canvas(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .padding(end = 4.dp)
+                                ) {
+                                    // Use primary or primaryContainer color based on index
+                                    val colorIndex = expensesByType.entries.toList()
+                                        .indexOf(expensesByType.entries.find { it.key == type })
+                                    val dotColor = when (colorIndex % 3) {
+                                        0 -> md_theme_light_primary
+                                        1 -> md_theme_light_primaryContainer
+                                        else -> Color(0xFF5B9A5C)
+                                    }
+                                    drawCircle(color = dotColor)
                                 }
-                                drawCircle(color = dotColor)
+                                Text(
+                                    text = type,
+                                    color = md_theme_light_onSurfaceVariant
+                                )
                             }
                             Text(
-                                text = type,
-                                color = md_theme_light_onSurfaceVariant
+                                text = "$${String.format("%.2f", amount)}",
+                                color = md_theme_light_primary,
+                                fontWeight = FontWeight.Bold
                             )
                         }
-                        Text(
-                            text = "$${String.format("%.2f", amount)}",
-                            color = md_theme_light_primary,
-                            fontWeight = FontWeight.Bold
-                        )
                     }
                 }
             }

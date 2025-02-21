@@ -14,16 +14,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
 import com.example.pennytrack.ui.theme.md_theme_light_surface
+import com.example.pennytrack.viewmodels.ExpenseViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun EditExpenseDialog(
     expense: Expense,
     onDismiss: () -> Unit,
-    onEditComplete: (String, Float, String, String, String) -> Unit
+    //onEditComplete: (String, String, String, String, String) -> Unit,
+    expenseViewModel: ExpenseViewModel
 ) {
     var editedName by rememberSaveable { mutableStateOf(expense.title) }
     var editedAmount by rememberSaveable { mutableStateOf(expense.amount.toString()) }
@@ -92,40 +98,43 @@ fun EditExpenseDialog(
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) { OutlinedTextField(
-                    value = editedDescription,
-                    onValueChange = { editedDescription = it },
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = md_theme_light_primary,
-                        focusedLabelColor = md_theme_light_primary
+                ) {
+                    OutlinedTextField(
+                        value = editedDescription,
+                        onValueChange = { editedDescription = it },
+                        label = { Text("Description") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = md_theme_light_primary,
+                            focusedLabelColor = md_theme_light_primary
+                        )
                     )
-                )
+
                     LazyRow (
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
                         state = rememberLazyListState(),
                         contentPadding = PaddingValues(horizontal = 8.dp)
-
                     ) {
-                        items(expenseTypes) {
-                                expenseType -> SuggestionChip(
-                            onClick = {editedDescription = expenseType},
-                            label = { Text(expenseType) },
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = if (editedDescription == expenseType){
-                                    md_theme_light_primaryContainer
-                                } else{
-                                    md_theme_light_surface
-                                }
-                            ),
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                enabled = true,
-                                borderColor = md_theme_light_primary.copy(alpha = 0.5f)
-                            ),
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        items(expenseTypes) { expenseType ->
+                            SuggestionChip(
+                                onClick = { editedDescription = expenseType },
+                                label = { Text(expenseType) },
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = if (editedDescription == expenseType) {
+                                        md_theme_light_primaryContainer
+                                    } else {
+                                        md_theme_light_surface
+                                    }
+                                ),
+                                border = SuggestionChipDefaults.suggestionChipBorder(
+                                    enabled = true,
+                                    borderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                                ),
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
                         }
                     }
                 }
@@ -136,8 +145,10 @@ fun EditExpenseDialog(
                         .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    // Date field with current date as default if empty
+                    val defaultDate = if (editedDate.isEmpty()) expenseViewModel.getTodayDate() else editedDate
                     OutlinedTextField(
-                        value = editedDate,
+                        value = defaultDate,
                         onValueChange = { editedDate = it },
                         label = { Text("Date") },
                         modifier = Modifier.weight(1f),
@@ -147,8 +158,15 @@ fun EditExpenseDialog(
                         )
                     )
 
+                    // Time field with current time as default if empty
+                    val currentTime = if (editedTime.isEmpty()) {
+                        SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                    } else {
+                        editedTime
+                    }
+
                     OutlinedTextField(
-                        value = editedTime,
+                        value = currentTime,
                         onValueChange = { editedTime = it },
                         label = { Text("Time") },
                         modifier = Modifier.weight(1f),
@@ -174,18 +192,18 @@ fun EditExpenseDialog(
 
                     Button(
                         onClick = {
-                            onEditComplete(
-                                editedName,
-                                editedAmount.toFloatOrNull() ?: 0f,
-                                editedDescription,
-                                editedDate,
-                                editedTime
+                            val updatedExpense = expense.copy(
+                                title = editedName,
+                                amount = editedAmount.toFloatOrNull() ?: 0f,
+                                description = editedDescription,
+                                date = editedDate,
+                                time = editedTime
                             )
+                            expenseViewModel.updateExpense(updatedExpense)
+                            onDismiss()
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = md_theme_light_primary
-                        )
+                        colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
                     ) {
                         Text("Save")
                     }

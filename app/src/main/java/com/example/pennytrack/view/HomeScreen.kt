@@ -2,6 +2,7 @@ package com.example.pennytrack.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,13 +31,38 @@ import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_surface
 import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 import com.example.pennytrack.viewmodels.ExpenseViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel = viewModel()) {
-    // Use remember to hold the expenses list to trigger recomposition when it changes
-    val expenses by expenseViewModel.expenses.collectAsState()
+fun HomeScreen(
+    navController: NavController,
+    expenseViewModel: ExpenseViewModel
+) {
+
+    val expenses = expenseViewModel.expenses.collectAsState().value
+    val currentDate = expenseViewModel.currentDate.collectAsState().value
     var selectedExpense by remember { mutableStateOf<Expense?>(null) } // Track selected expense for editing
+
+    // Format current date for display
+    val dateFormatter = remember { SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) }
+    val displayDate = remember(currentDate) {
+        try {
+            val parsedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(currentDate)
+            dateFormatter.format(parsedDate)
+        } catch (e: Exception) {
+            currentDate
+        }
+    }
+
+    // Calculate total expenses for today
+    val totalExpenses = expenses.sumOf { it.amount.toDouble() }
+
+    // Ensure we're always showing today's expenses when this screen appears
+    LaunchedEffect(Unit) {
+        expenseViewModel.refreshTodayExpenses()
+    }
 
     // Navigation logic for Home screen
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -43,11 +70,21 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Penny Track",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = md_theme_light_onPrimary
-                ) },
+                title = {
+                    Column {
+                        Text(
+                            "Penny Track",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = md_theme_light_onPrimary
+                        )
+                        Text(
+                            displayDate, // Show formatted current date
+                            fontSize = 14.sp,
+                            color = md_theme_light_onPrimary.copy(alpha = 0.8f)
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = md_theme_light_primary,
                     scrolledContainerColor = md_theme_light_onPrimary
@@ -65,59 +102,118 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
                         .padding(innerPadding)
                 ) {
                     // Total Daily Expenses Display
-                    Card(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = md_theme_light_surfaceVariant)
-                    ){
-                        Text(
-                            text = "Total Daily Expenses: \$${expenses.sumOf { it.amount.toDouble() }}",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                                .padding(16.dp)
+                            containerColor = md_theme_light_surfaceVariant
                         )
+                    ) {
+                        Row (
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Today's Expenses",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f),
+                                modifier =  Modifier.padding(end = 32.dp)
+                            )
+
+                            Text(
+                                text = "$${String.format("%.2f", totalExpenses)}",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = md_theme_light_primary,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
                     }
 
-                    // Expense List
-                    LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-                        items(expenses.size) { index ->
-                            ExpenseItem(
-                                expense = expenses[index],
-                                onEdit = {
-                                    selectedExpense = expenses[index]  // Set selected expense to edit
-                                },
-                                onDelete = {
-                                    expenseViewModel.removeExpense(expenses[index])
-                                    //expenses = expenseViewModel.expenses // Update expenses list after delete
+                    // Empty state message
+                    if (expenses.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.MoneyOff,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = md_theme_light_primary.copy(alpha = 0.5f)
+                                )
+                                Text(
+                                    "No expenses recorded today",
+                                    fontSize = 16.sp,
+                                    color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                                Button(
+                                    onClick = { navController.navigate("addExpense") },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = md_theme_light_primary
+                                    )
+                                ) {
+                                    Text("Add Your First Expense")
                                 }
-                            )
+                            }
+                        }
+                    } else {
+                        // Expense List
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                        ) {
+                            items(expenses) { expense ->
+                                ExpenseItem(
+                                    expense = expense,
+                                    onEdit = {
+                                        selectedExpense = expense
+                                    },
+                                    onDelete = {
+                                        expenseViewModel.removeExpense(expense)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
 
                 BottomAppBar(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter),
+                    modifier = Modifier.align(Alignment.BottomCenter),
                     containerColor = md_theme_light_surface,
                     contentColor = md_theme_light_primary
-
                 ) {
                     IconButton(
-                        onClick = { navController.navigate("home") },
+                        onClick = { /* Already on home */ },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
+                        Icon(
+                            Icons.Filled.Home,
+                            contentDescription = "Home",
+                            tint = md_theme_light_primary // Highlight the active tab
+                        )
                     }
 
                     IconButton(
                         onClick = { navController.navigate("chart") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                            contentDescription = "Chart")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                            contentDescription = "Chart"
+                        )
                     }
 
                     FloatingActionButton(
@@ -156,18 +252,7 @@ fun HomeScreen(navController: NavController, expenseViewModel: ExpenseViewModel 
         EditExpenseDialog (
             expense = expense,
             onDismiss = { selectedExpense = null},
-            onEditComplete = {
-                name, amount, description, date, time ->
-                val updateExpense = expense.copy(
-                    title = name,
-                    amount = amount.toFloat(),
-                    description = description,
-                    date = date,
-                    time = time
-                )
-                expenseViewModel.updateExpense(updateExpense)
-                selectedExpense = null
-            }
+            expenseViewModel = expenseViewModel
         )
     }
 }
@@ -268,8 +353,3 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
-}
