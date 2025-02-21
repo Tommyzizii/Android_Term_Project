@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.asLiveData
 import com.example.pennytrack.PennyTrackApplication
 import com.example.pennytrack.dao.ExpenseDatabase
-import com.example.pennytrack.dao.MonthlyTotal
 import com.example.pennytrack.data.models.Expense
+import com.example.pennytrack.data.models.MonthlyTotal
 import com.example.pennytrack.repository.ExpenseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

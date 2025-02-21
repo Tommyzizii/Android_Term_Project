@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.pennytrack.data.models.Expense
+import com.example.pennytrack.data.models.MonthlyTotal
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -39,8 +40,3 @@ interface ExpenseDao {
     @Query("SELECT DISTINCT substr(date, 4) AS monthYear, SUM(amount) as total FROM expenses GROUP BY monthYear ORDER BY substr(monthYear, 4) DESC, substr(monthYear, 1, 2) DESC")
     fun getMonthlyTotals(): Flow<List<MonthlyTotal>>
 }
-
-data class MonthlyTotal(
-    val monthYear: String,
-    val total: Float
-)

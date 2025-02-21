@@ -1,8 +1,8 @@
 package com.example.pennytrack.repository
 
 import com.example.pennytrack.dao.ExpenseDao
-import com.example.pennytrack.dao.MonthlyTotal
 import com.example.pennytrack.data.models.Expense
+import com.example.pennytrack.data.models.MonthlyTotal
 import kotlinx.coroutines.flow.Flow
 
 class ExpenseRepository(
