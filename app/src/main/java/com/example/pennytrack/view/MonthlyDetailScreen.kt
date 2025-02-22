@@ -38,9 +38,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pennytrack.data.models.Expense
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
+import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_surface
+import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,12 +69,28 @@ fun MonthlyDetailScreen(
 ) {
     val decodedMonthYear = Uri.decode(monthYear)
 
-    viewModel.setMonth(monthYear)
+    LaunchedEffect(monthYear) {
+        viewModel.setMonth(monthYear)
+    }
 
     val dailyTotals by viewModel.getDailyTotalsForCurrentMonth().collectAsState()
     val expensesByDay by viewModel.getExpensesGroupedByDayForCurrentMonth().collectAsState()
     val formattedMonth = viewModel.formatMonthYear(monthYear)
     val monthTotal by viewModel.getTotalExpenseForMonth(monthYear).observeAsState(0f)
+
+    // Add debug logging
+    LaunchedEffect(dailyTotals) {
+        println("DailyTotals updated: ${dailyTotals.size} items")
+    }
+
+    LaunchedEffect(expensesByDay) {
+        println("ExpensesByDay updated: ${expensesByDay.size} items")
+    }
+
+    LaunchedEffect(dailyTotals, expensesByDay) {
+        println("Daily Totals: $dailyTotals")
+        println("Expenses By Day: $expensesByDay")
+    }
 
     Scaffold(
         topBar = {
@@ -160,33 +193,102 @@ fun DailyExpenseCard(
     total: Float,
     expenses: List<Expense>
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
+            .clickable { isExpanded = !isExpanded },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = md_theme_light_surfaceVariant
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+            // Header row with date and total
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = date,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isExpanded)
+                            Icons.Filled.KeyboardArrowDown
+                        else
+                            Icons.Filled.KeyboardArrowRight,
+                        contentDescription = if (isExpanded) "Collapse" else "Expand",
+                        tint = md_theme_light_primary
+                    )
+                    Text(
+                        text = date,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = md_theme_light_onSurfaceVariant
+                    )
+                }
                 Text(
                     text = "$${String.format("%.2f", total)}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.primary
+                    color = md_theme_light_primary
                 )
             }
 
-            // You can add expense details here if needed
-            // This could be expanded with a state to show/hide details
+            // Expandable expense details
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    expenses.forEach { expense ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = expense.description,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = md_theme_light_onSurfaceVariant
+                                )
+//                                Text(
+//                                    text = expense.?: "Uncategorized",
+//                                    style = MaterialTheme.typography.bodyMedium,
+//                                    color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+//                                )
+                            }
+                            Text(
+                                text = "$${String.format("%.2f", expense.amount)}",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                                color = md_theme_light_primary
+                            )
+                        }
+                        if (expense != expenses.last()) {
+                            Divider(
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                color = md_theme_light_onSurfaceVariant.copy(alpha = 0.2f)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
-
 }

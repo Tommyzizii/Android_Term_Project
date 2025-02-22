@@ -20,9 +20,6 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE date = :date ORDER BY time DESC")
     fun getExpensesByDate(date: String): Flow<List<Expense>>
 
-    @Query("SELECT * FROM expenses WHERE date LIKE :monthYear || '%' ORDER BY date DESC, time DESC")
-    fun getExpensesByMonth(monthYear: String): Flow<List<Expense>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExpense(expense: Expense): Long
 
@@ -38,7 +35,22 @@ interface ExpenseDao {
     @Query("SELECT SUM(amount) FROM expenses WHERE date LIKE :monthYear || '%'")
     fun getTotalExpenseForMonth(monthYear: String): Flow<Float?>
 
-    @Query("SELECT DISTINCT substr(date, 4) AS monthYear, SUM(amount) as total FROM expenses GROUP BY monthYear ORDER BY substr(monthYear, 4) DESC, substr(monthYear, 1, 2) DESC")
+    @Query("""
+        SELECT 
+            substr(date, 4, 7) AS monthYear, 
+            SUM(amount) as total,
+            COUNT(*) as count
+        FROM expenses 
+        GROUP BY substr(date, 4, 7)
+        ORDER BY date DESC
+    """)
     fun getMonthlyTotals(): Flow<List<MonthlyTotal>>
+
+    @Query("""
+        SELECT * FROM expenses 
+        WHERE substr(date, 4, 7) = :monthYear 
+        ORDER BY date DESC, time DESC
+    """)
+    fun getExpensesByMonth(monthYear: String): Flow<List<Expense>>
 
 }

@@ -76,6 +76,13 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
                     }
             }
         }
+
+        viewModelScope.launch {
+            repository.allExpenses.collect { expenses ->
+                println("Total expenses in database: ${expenses.size}")
+                println("Sample expense dates: ${expenses.take(5).map { it.date }}")
+            }
+        }
     }
 
     // Date handling functions
@@ -94,7 +101,17 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
     }
 
     fun setMonth(monthYear: String) {
-        _currentMonth.value = monthYear
+        viewModelScope.launch {
+            println("Setting month to: $monthYear")
+            _currentMonth.value = monthYear
+
+            // Explicitly load data
+            repository.getExpensesByMonth(monthYear)
+                .collect { expenses ->
+                    println("Loaded ${expenses.size} expenses for $monthYear")
+                    _monthlyExpenses.value = expenses
+                }
+        }
     }
 
     fun refreshTodayExpenses() {
@@ -188,11 +205,14 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
     // Function to get daily totals for the current selected month
     fun getDailyTotalsForCurrentMonth(): StateFlow<List<Pair<String, Float>>> {
         return _monthlyExpenses.map { expenses ->
+            println("Processing ${expenses.size} expenses for month ${_currentMonth.value}")
             expenses.groupBy { it.date }
                 .map { (date, expensesForDay) ->
-                    Pair(date, expensesForDay.sumOf { it.amount.toDouble() }.toFloat())
+                    val total = expensesForDay.sumOf { it.amount.toDouble() }.toFloat()
+                    println("Date: $date, Total: $total")
+                    Pair(date, total)
                 }
-                .sortedByDescending { (date, _) -> date } // Most recent first
+                .sortedByDescending { (date, _) -> date }
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
