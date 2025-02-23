@@ -2,6 +2,7 @@
 agp = "8.7.3"
 compose = "1.11.0"
 composeVersion = "1.9.0"
+firebaseBom = "33.9.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -43,6 +44,10 @@ compose-v1100 = { module = "com.patrykandpatrick.vico:compose", version.ref = "p
 compose-v1110 = { module = "com.patrykandpatrick.vico:compose", version.ref = "compose" }
 compose-v190 = { module = "com.patrykandpatrick.vico:compose", version.ref = "composeVersion" }
 core = { module = "com.patrykandpatrick.vico:core", version.ref = "vicoVersion" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
