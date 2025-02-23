@@ -126,9 +126,9 @@ fun HomeScreen(
 
                             Text(
                                 text = "$${String.format("%.2f", totalExpenses)}",
-                                fontSize = 24.sp,
+                                fontSize = 21.sp,
                                 fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.headlineMedium,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = md_theme_light_primary,
                                 modifier = Modifier.padding(start = 16.dp)
                             )

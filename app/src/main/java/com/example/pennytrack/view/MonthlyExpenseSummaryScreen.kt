@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.pennytrack.ui.theme.md_theme_light_primary
@@ -45,6 +46,9 @@ fun MonthlyExpenseSummaryScreen(
                         viewModel.setMonth(monthlyTotal.monthYear)
                         navController.navigate("month_detail/${Uri.encode(monthlyTotal.monthYear)}")
                     },
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 2.dp
+                ),
                 colors = CardDefaults.cardColors(
                     containerColor = md_theme_light_surfaceVariant
                 )
@@ -58,12 +62,18 @@ fun MonthlyExpenseSummaryScreen(
                 ) {
                     Text(
                         text = displayName,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp // Suitable size for display name
+                        ),
                         color = md_theme_light_primary
                     )
                     Text(
                         text = "$${String.format("%.2f", monthlyTotal.total)}",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp // Suitable size for the total value
+                        ),
                         color = md_theme_light_onSurfaceVariant
                     )
                 }

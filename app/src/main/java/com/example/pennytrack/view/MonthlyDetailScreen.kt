@@ -268,11 +268,11 @@ fun DailyExpenseCard(
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = md_theme_light_onSurfaceVariant
                                 )
-//                                Text(
-//                                    text = expense.?: "Uncategorized",
-//                                    style = MaterialTheme.typography.bodyMedium,
-//                                    color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
-//                                )
+                                Text(
+                                    text = expense.title?: "No Title",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                                )
                             }
                             Text(
                                 text = "$${String.format("%.2f", expense.amount)}",
