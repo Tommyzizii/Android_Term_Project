@@ -81,6 +81,18 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
 
+    //Biometrics
+    implementation(libs.androidx.biometric)
+
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
+
+    //Coroutine
+    implementation(libs.kotlinx.coroutines.android)
+
+    //Coil
+    implementation(libs.coil.compose)
+
     // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

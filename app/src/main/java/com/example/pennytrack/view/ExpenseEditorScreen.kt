@@ -55,7 +55,7 @@ fun EditExpenseDialog(
                 .fillMaxWidth()
                 .padding(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = md_theme_light_surface
+                containerColor = MaterialTheme.colorScheme.surface
             )
         ) {
             Column(
@@ -65,7 +65,7 @@ fun EditExpenseDialog(
                     "Edit Expense",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = md_theme_light_primary,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
@@ -75,8 +75,8 @@ fun EditExpenseDialog(
                     label = { Text("Title") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = md_theme_light_primary,
-                        focusedLabelColor = md_theme_light_primary
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
                     )
                 )
 
@@ -89,8 +89,8 @@ fun EditExpenseDialog(
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = md_theme_light_primary,
-                        focusedLabelColor = md_theme_light_primary
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
                     )
                 )
 
@@ -105,8 +105,8 @@ fun EditExpenseDialog(
                         label = { Text("Description") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = md_theme_light_primary,
-                            focusedLabelColor = md_theme_light_primary
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary
                         )
                     )
 
@@ -124,14 +124,14 @@ fun EditExpenseDialog(
                                 label = { Text(expenseType) },
                                 colors = SuggestionChipDefaults.suggestionChipColors(
                                     containerColor = if (editedDescription == expenseType) {
-                                        md_theme_light_primaryContainer
+                                        MaterialTheme.colorScheme.primaryContainer
                                     } else {
-                                        md_theme_light_surface
+                                        MaterialTheme.colorScheme.surface
                                     }
                                 ),
                                 border = SuggestionChipDefaults.suggestionChipBorder(
                                     enabled = true,
-                                    borderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                                 ),
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )

@@ -65,20 +65,20 @@ fun MonthlyExpenseScreen(
                         "Monthly History",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = md_theme_light_onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = md_theme_light_primary,
-                    scrolledContainerColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier,
-                containerColor = md_theme_light_surface,
-                contentColor = md_theme_light_primary
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary
             ) {
                 IconButton(
                     onClick = { navController.navigate("home") },
@@ -103,8 +103,8 @@ fun MonthlyExpenseScreen(
                         .size(56.dp)
                         .align(Alignment.CenterVertically)
                         .padding(0.dp),
-                    containerColor = md_theme_light_primary,
-                    contentColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                 }
@@ -124,7 +124,7 @@ fun MonthlyExpenseScreen(
                 }
             }
         },
-        containerColor = md_theme_light_surface
+        containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
         MonthlyExpenseSummaryScreen(
             navController = navController,

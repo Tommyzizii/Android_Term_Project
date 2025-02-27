@@ -50,7 +50,7 @@ fun MonthlyExpenseSummaryScreen(
                     defaultElevation = 2.dp
                 ),
                 colors = CardDefaults.cardColors(
-                    containerColor = md_theme_light_surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
                 Row(
@@ -66,7 +66,7 @@ fun MonthlyExpenseSummaryScreen(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 20.sp // Suitable size for display name
                         ),
-                        color = md_theme_light_primary
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = "$${String.format("%.2f", monthlyTotal.total)}",
@@ -74,7 +74,7 @@ fun MonthlyExpenseSummaryScreen(
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp // Suitable size for the total value
                         ),
-                        color = md_theme_light_onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

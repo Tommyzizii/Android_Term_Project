@@ -100,7 +100,7 @@ fun MonthlyDetailScreen(
                         formattedMonth,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = md_theme_light_onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 navigationIcon = {
@@ -108,29 +108,32 @@ fun MonthlyDetailScreen(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = md_theme_light_onPrimary
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = md_theme_light_primary,
-                    scrolledContainerColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier,
-                containerColor = md_theme_light_surface,
-                contentColor = md_theme_light_primary
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary
             ) {
                 IconButton(
                     onClick = { navController.navigate("home") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.Home, contentDescription = "Home")
+                    Icon(
+                        Icons.Filled.Home,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
-
                 IconButton(
                     onClick = { navController.navigate("chart") },
                     modifier = Modifier.weight(1f)
@@ -140,26 +143,23 @@ fun MonthlyDetailScreen(
                         contentDescription = "Chart"
                     )
                 }
-
                 FloatingActionButton(
                     onClick = { navController.navigate("addExpense") },
                     modifier = Modifier
                         .size(56.dp)
                         .align(Alignment.CenterVertically)
                         .padding(0.dp),
-                    containerColor = md_theme_light_primary,
-                    contentColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                 }
-
                 IconButton(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Filled.DateRange, contentDescription = "History")
                 }
-
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
@@ -168,7 +168,7 @@ fun MonthlyDetailScreen(
                 }
             }
         },
-        containerColor = md_theme_light_surface
+        containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
         // Daily expenses list
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
@@ -204,7 +204,7 @@ fun DailyExpenseCard(
             defaultElevation = 2.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = md_theme_light_surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Column(
@@ -226,18 +226,18 @@ fun DailyExpenseCard(
                         else
                             Icons.Filled.KeyboardArrowRight,
                         contentDescription = if (isExpanded) "Collapse" else "Expand",
-                        tint = md_theme_light_primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = date,
                         style = MaterialTheme.typography.titleMedium,
-                        color = md_theme_light_onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Text(
                     text = "$${String.format("%.2f", total)}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = md_theme_light_primary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -266,24 +266,24 @@ fun DailyExpenseCard(
                                 Text(
                                     text = expense.description,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = md_theme_light_onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
                                     text = expense.title?: "No Title",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
                             }
                             Text(
                                 text = "$${String.format("%.2f", expense.amount)}",
                                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                                color = md_theme_light_primary
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                         if (expense != expenses.last()) {
                             Divider(
                                 modifier = Modifier.padding(vertical = 4.dp),
-                                color = md_theme_light_onSurfaceVariant.copy(alpha = 0.2f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
                             )
                         }
                     }

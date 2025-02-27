@@ -113,6 +113,7 @@ fun ChartScreen(
         )
     }
 
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -122,13 +123,13 @@ fun ChartScreen(
                             "Expense Chart",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = md_theme_light_onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
 
                         Text(
                             currentDate, // Show formatted current date
                             fontSize = 14.sp,
-                            color = md_theme_light_onPrimary.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                         )
                     }
 
@@ -139,13 +140,13 @@ fun ChartScreen(
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = "Refresh Today's Data",
-                            tint = md_theme_light_onPrimary
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = md_theme_light_primary,
-                    scrolledContainerColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
@@ -153,46 +154,45 @@ fun ChartScreen(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier,
-                containerColor = md_theme_light_surface,
-                contentColor = md_theme_light_primary
-
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary
             ) {
                 IconButton(
                     onClick = { navController.navigate("home") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.Home, contentDescription = "Home")
+                    Icon(
+                        Icons.Filled.Home,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
-
                 IconButton(
-                    onClick = { navController.navigate("chart") },
+                    onClick = {  },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                        contentDescription = "Chart",
+                        contentDescription = "Chart"
                     )
                 }
-
                 FloatingActionButton(
                     onClick = { navController.navigate("addExpense") },
                     modifier = Modifier
                         .size(56.dp)
                         .align(Alignment.CenterVertically)
                         .padding(0.dp),
-                    containerColor = md_theme_light_primary,
-                    contentColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                 }
-
                 IconButton(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Filled.DateRange, contentDescription = "History")
                 }
-
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
@@ -201,7 +201,7 @@ fun ChartScreen(
                 }
             }
         },
-        containerColor = md_theme_light_surface
+        containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -214,7 +214,7 @@ fun ChartScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = md_theme_light_surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
                 Row (
@@ -227,7 +227,7 @@ fun ChartScreen(
                         text = "Today's Expenses",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         modifier =  Modifier.padding(end = 32.dp)
                     )
 
@@ -236,7 +236,7 @@ fun ChartScreen(
                         fontSize = 21.sp,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodySmall,
-                        color = md_theme_light_primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(start = 16.dp)
                     )
                 }
@@ -249,7 +249,7 @@ fun ChartScreen(
                     .height(300.dp)
                     .padding(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = md_theme_light_surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
                 if (expenses.isEmpty()) {
@@ -261,7 +261,7 @@ fun ChartScreen(
                         Text(
                             text = "No expenses recorded today",
                             fontSize = 16.sp,
-                            color = md_theme_light_onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 } else {
@@ -272,7 +272,7 @@ fun ChartScreen(
                             text = "Expense Breakdown",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = md_theme_light_onSurfaceVariant,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
 
@@ -283,14 +283,14 @@ fun ChartScreen(
                             startAxis = rememberStartAxis(
                                 valueFormatter = yAxisFormatter,
                                 label = textComponent(
-                                    color = md_theme_light_onSurfaceVariant,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     textSize = 12.sp
                                 )
                             ),
                             bottomAxis = rememberBottomAxis(
                                 valueFormatter = xAxisFormatter,
                                 label = textComponent(
-                                    color = md_theme_light_onSurfaceVariant,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     textSize = 12.sp
                                 )
                             )
@@ -332,12 +332,12 @@ fun ChartScreen(
                                 }
                                 Text(
                                     text = type,
-                                    color = md_theme_light_onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             Text(
                                 text = "$${String.format("%.2f", amount)}",
-                                color = md_theme_light_primary,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
                         }

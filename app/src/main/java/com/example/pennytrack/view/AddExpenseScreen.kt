@@ -105,8 +105,8 @@ fun AddExpenseScreen(
                     }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = md_theme_light_surface,
-                    titleContentColor = md_theme_light_primary
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         }
@@ -125,14 +125,14 @@ fun AddExpenseScreen(
                 .padding(top = 2.dp),
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Medium,
-                color = md_theme_light_onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
             // Amount Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = md_theme_light_surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(0.dp)
             ) {
@@ -143,8 +143,8 @@ fun AddExpenseScreen(
                     onValueChange = { expenseTitle = it },
                     label = { Text("Title") },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = md_theme_light_primary,
-                        unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     ),
                     singleLine = true
                 )
@@ -154,13 +154,13 @@ fun AddExpenseScreen(
                 .padding(top = 2.dp),
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Medium,
-                color = md_theme_light_onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             // Details Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = md_theme_light_surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(0.dp)
             ) {
@@ -174,8 +174,8 @@ fun AddExpenseScreen(
                         onValueChange = { expenseAmount = it },
                         label = { Text("Amount ($)") },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = md_theme_light_primary,
-                            unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                         ),
                         singleLine = true
                     )
@@ -190,8 +190,8 @@ fun AddExpenseScreen(
                             onValueChange = { expenseDescription = it },
                             label = { Text("Description") },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = md_theme_light_primary,
-                                unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                             ),
                             minLines = 2
                         )
@@ -208,14 +208,14 @@ fun AddExpenseScreen(
                                     label = { Text(expenseType) },
                                     colors = SuggestionChipDefaults.suggestionChipColors(
                                         containerColor = if (expenseDescription == expenseType) {
-                                            md_theme_light_primaryContainer
+                                            MaterialTheme.colorScheme.primaryContainer
                                         } else {
-                                            md_theme_light_surface
+                                            MaterialTheme.colorScheme.surface
                                         }
                                     ),
                                     border = SuggestionChipDefaults.suggestionChipBorder(
                                         enabled = true,
-                                        borderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                                     ),
                                     modifier = Modifier.padding(vertical = 4.dp)
                                 )
@@ -229,13 +229,13 @@ fun AddExpenseScreen(
                 .padding(top = 2.dp),
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Medium,
-                color = md_theme_light_onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             // Date and Time Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = md_theme_light_surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(0.dp)
             ) {
@@ -254,13 +254,13 @@ fun AddExpenseScreen(
                                 Icon(
                                     Icons.Default.Edit,
                                     contentDescription = "Pick Date",
-                                    tint = md_theme_light_primary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = md_theme_light_primary,
-                            unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                         )
                     )
 
@@ -275,13 +275,13 @@ fun AddExpenseScreen(
                                 Icon(
                                     Icons.Default.Edit,
                                     contentDescription = "Pick Time",
-                                    tint = md_theme_light_primary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = md_theme_light_primary,
-                            unfocusedBorderColor = md_theme_light_primary.copy(alpha = 0.5f)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                         )
                     )
                 }
@@ -300,7 +300,7 @@ fun AddExpenseScreen(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = md_theme_light_primary
+                        contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Text("Cancel")
@@ -324,7 +324,7 @@ fun AddExpenseScreen(
                     },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = md_theme_light_primary
+                        containerColor = MaterialTheme.colorScheme.primary
                     ),
                     enabled = expenseTitle.isNotBlank() && expenseAmount.isNotBlank()
                 ) {

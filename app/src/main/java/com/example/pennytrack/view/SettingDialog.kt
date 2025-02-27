@@ -26,23 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
-import com.example.pennytrack.ui.theme.md_theme_light_onSurface
-import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
-import com.example.pennytrack.ui.theme.md_theme_light_primary
-import com.example.pennytrack.ui.theme.md_theme_light_surface
-import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 
 @Composable
 fun SettingsDialog(
     showDialog: Boolean,
+    currentDarkMode: Boolean,
     onDismiss: () -> Unit,
     onLanguageChange: (String) -> Unit,
     onThemeChange: (Boolean) -> Unit
 ) {
     var selectedLanguage by remember { mutableStateOf("English") }
     var isDarkMode by remember { mutableStateOf(false) }
-
 
     if (showDialog) {
         Dialog(
@@ -52,7 +46,7 @@ fun SettingsDialog(
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 tonalElevation = 8.dp,
-                color = md_theme_light_surface
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -61,15 +55,15 @@ fun SettingsDialog(
                     Text(
                         text = "Settings",
                         style = MaterialTheme.typography.titleLarge,
-                        color = md_theme_light_onSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    Divider(color = md_theme_light_surfaceVariant)
+                    Divider(color = MaterialTheme.colorScheme.surfaceVariant)
 
                     Text(
                         text = "Select Language:",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = md_theme_light_onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Column {
                         listOf("English", "Myanmar").forEach { language ->
@@ -79,7 +73,7 @@ fun SettingsDialog(
                             ) {
                                 Text(
                                     text = language,
-                                    color = md_theme_light_onSurface
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 RadioButton(
                                     selected = (selectedLanguage == language),
@@ -88,40 +82,37 @@ fun SettingsDialog(
                                         onLanguageChange(language)
                                     },
                                     colors = RadioButtonDefaults.colors(
-                                        selectedColor = md_theme_light_primary,
-                                        unselectedColor = md_theme_light_onSurfaceVariant
+                                        selectedColor = MaterialTheme.colorScheme.primary,
+                                        unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 )
                             }
                         }
                     }
 
-                    Divider(color = md_theme_light_surfaceVariant)
+                    Divider(color = MaterialTheme.colorScheme.surfaceVariant)
 
                     Text(
                         text = "Theme Mode:",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = md_theme_light_onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = if (isDarkMode) "Dark Mode 🌙" else "Light Mode ☀️",
-                            color = md_theme_light_onSurface
+                            text = if (currentDarkMode) "Dark Mode 🌙" else "Light Mode ☀️",
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Switch(
-                            checked = isDarkMode,
-                            onCheckedChange = {
-                                isDarkMode = it
-                                onThemeChange(it)
-                            },
+                            checked = currentDarkMode,
+                            onCheckedChange = onThemeChange,
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = md_theme_light_onPrimary,
-                                checkedTrackColor = md_theme_light_primary,
-                                uncheckedThumbColor = md_theme_light_onSurfaceVariant,
-                                uncheckedTrackColor = md_theme_light_surfaceVariant
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
                             )
                         )
                     }
@@ -132,8 +123,8 @@ fun SettingsDialog(
                         onClick = onDismiss,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = md_theme_light_primary,
-                            contentColor = md_theme_light_onPrimary
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Text("Done")

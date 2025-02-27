@@ -1,31 +1,45 @@
 package com.example.pennytrack.view
 
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.automirrored.filled.ShowChart
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import com.example.pennytrack.ui.theme.md_theme_light_onSurface
 import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
 import com.example.pennytrack.ui.theme.md_theme_light_surface
 import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+
+
 
 @Composable
 fun RightDrawerContent(
@@ -39,14 +53,14 @@ fun RightDrawerContent(
         modifier = Modifier
             .fillMaxHeight()
             .width(250.dp),
-        drawerContainerColor = md_theme_light_surface,
+        drawerContainerColor = MaterialTheme.colorScheme.surface,
     ) {
         Text(
             text = "Menu",
             modifier = Modifier
                 .padding(24.dp),
             style = MaterialTheme.typography.titleLarge,
-            color = md_theme_light_onSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Divider(
@@ -60,24 +74,24 @@ fun RightDrawerContent(
                 Icon(
                     Icons.Filled.AccountCircle,
                     contentDescription = "Profile",
-                    tint = md_theme_light_primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
                     "Profile",
-                    color = md_theme_light_onSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             selected = false,
             onClick = { scope.launch { drawerState.close() } },
             colors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = md_theme_light_surface,
-                selectedContainerColor = md_theme_light_primaryContainer,
-                unselectedIconColor = md_theme_light_primary,
-                unselectedTextColor = md_theme_light_onSurface,
-                selectedIconColor = md_theme_light_primary,
-                selectedTextColor = md_theme_light_onSurface
+                unselectedContainerColor = MaterialTheme.colorScheme.surface,
+                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unselectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         )
@@ -87,13 +101,13 @@ fun RightDrawerContent(
                 Icon(
                     Icons.Filled.Settings,
                     contentDescription = "Settings",
-                    tint = md_theme_light_primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
                     "Settings",
-                    color = md_theme_light_onSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             selected = false,
@@ -102,12 +116,12 @@ fun RightDrawerContent(
                 onSettingsClick()
             },
             colors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = md_theme_light_surface,
-                selectedContainerColor = md_theme_light_primaryContainer,
-                unselectedIconColor = md_theme_light_primary,
-                unselectedTextColor = md_theme_light_onSurface,
-                selectedIconColor = md_theme_light_primary,
-                selectedTextColor = md_theme_light_onSurface
+                unselectedContainerColor = MaterialTheme.colorScheme.surface,
+                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unselectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
         )
@@ -117,13 +131,13 @@ fun RightDrawerContent(
                 Icon(
                     Icons.Filled.LocationOn,
                     contentDescription = "Bank Locations",
-                    tint = md_theme_light_primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
                     "Bank Locations",
-                    color = md_theme_light_onSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             selected = false,
@@ -132,12 +146,12 @@ fun RightDrawerContent(
                 navController.navigate("bankLocations")
             },
             colors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = md_theme_light_surface,
-                selectedContainerColor = md_theme_light_primaryContainer,
-                unselectedIconColor = md_theme_light_primary,
-                unselectedTextColor = md_theme_light_onSurface,
-                selectedIconColor = md_theme_light_primary,
-                selectedTextColor = md_theme_light_onSurface
+                unselectedContainerColor = MaterialTheme.colorScheme.surface,
+                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unselectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
 

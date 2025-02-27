@@ -18,18 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.pennytrack.data.models.Expense
-import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
-import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
-import com.example.pennytrack.ui.theme.md_theme_light_primary
-import com.example.pennytrack.ui.theme.md_theme_light_surface
-import com.example.pennytrack.ui.theme.md_theme_light_surfaceVariant
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -40,10 +33,9 @@ fun HomeScreen(
     navController: NavController,
     expenseViewModel: ExpenseViewModel
 ) {
-
     val expenses = expenseViewModel.expenses.collectAsState().value
     val currentDate = expenseViewModel.currentDate.collectAsState().value
-    var selectedExpense by remember { mutableStateOf<Expense?>(null) } // Track selected expense for editing
+    var selectedExpense by remember { mutableStateOf<Expense?>(null) }
 
     // Format current date for display
     val dateFormatter = remember { SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) }
@@ -59,7 +51,7 @@ fun HomeScreen(
     // Calculate total expenses for today
     val totalExpenses = expenses.sumOf { it.amount.toDouble() }
 
-    // Ensure we're always showing today's expenses when this screen appears
+    // Ensure today's expenses are refreshed when this screen appears
     LaunchedEffect(Unit) {
         expenseViewModel.refreshTodayExpenses()
     }
@@ -76,26 +68,25 @@ fun HomeScreen(
                             "Penny Track",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = md_theme_light_onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                         Text(
-                            displayDate, // Show formatted current date
+                            displayDate,
                             fontSize = 14.sp,
-                            color = md_theme_light_onPrimary.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = md_theme_light_primary,
-                    scrolledContainerColor = md_theme_light_onPrimary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    scrolledContainerColor = MaterialTheme.colorScheme.primary
                 ),
                 scrollBehavior = scrollBehavior
             )
         },
-        containerColor = md_theme_light_surface,
+        containerColor = MaterialTheme.colorScheme.surface,
         content = { innerPadding ->
             Box(modifier = Modifier.fillMaxSize()) {
-                // Main content
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -107,11 +98,12 @@ fun HomeScreen(
                             .fillMaxWidth()
                             .padding(16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = md_theme_light_surfaceVariant
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     ) {
-                        Row (
-                            modifier = Modifier.fillMaxWidth()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -120,22 +112,21 @@ fun HomeScreen(
                                 text = "Today's Expenses",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier =  Modifier.padding(end = 32.dp)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                modifier = Modifier.padding(end = 32.dp)
                             )
-
                             Text(
                                 text = "$${String.format("%.2f", totalExpenses)}",
                                 fontSize = 21.sp,
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = md_theme_light_primary,
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(start = 16.dp)
                             )
                         }
                     }
 
-                    // Empty state message
+                    // Empty state message or Expense List
                     if (expenses.isEmpty()) {
                         Box(
                             modifier = Modifier
@@ -151,17 +142,17 @@ fun HomeScreen(
                                     Icons.Default.MoneyOff,
                                     contentDescription = null,
                                     modifier = Modifier.size(64.dp),
-                                    tint = md_theme_light_primary.copy(alpha = 0.5f)
+                                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                                 )
                                 Text(
                                     "No expenses recorded today",
                                     fontSize = 16.sp,
-                                    color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
                                 Button(
                                     onClick = { navController.navigate("addExpense") },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = md_theme_light_primary
+                                        containerColor = MaterialTheme.colorScheme.primary
                                     )
                                 ) {
                                     Text("Add Your First Expense")
@@ -169,7 +160,6 @@ fun HomeScreen(
                             }
                         }
                     } else {
-                        // Expense List
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -178,12 +168,8 @@ fun HomeScreen(
                             items(expenses) { expense ->
                                 ExpenseItem(
                                     expense = expense,
-                                    onEdit = {
-                                        selectedExpense = expense
-                                    },
-                                    onDelete = {
-                                        expenseViewModel.removeExpense(expense)
-                                    }
+                                    onEdit = { selectedExpense = expense },
+                                    onDelete = { expenseViewModel.removeExpense(expense) }
                                 )
                             }
                         }
@@ -192,8 +178,8 @@ fun HomeScreen(
 
                 BottomAppBar(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    containerColor = md_theme_light_surface,
-                    contentColor = md_theme_light_primary
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ) {
                     IconButton(
                         onClick = { /* Already on home */ },
@@ -202,10 +188,9 @@ fun HomeScreen(
                         Icon(
                             Icons.Filled.Home,
                             contentDescription = "Home",
-                            tint = md_theme_light_primary // Highlight the active tab
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
-
                     IconButton(
                         onClick = { navController.navigate("chart") },
                         modifier = Modifier.weight(1f)
@@ -215,26 +200,23 @@ fun HomeScreen(
                             contentDescription = "Chart"
                         )
                     }
-
                     FloatingActionButton(
                         onClick = { navController.navigate("addExpense") },
                         modifier = Modifier
                             .size(56.dp)
                             .align(Alignment.CenterVertically)
                             .padding(0.dp),
-                        containerColor = md_theme_light_primary,
-                        contentColor = md_theme_light_onPrimary
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                     }
-
                     IconButton(
                         onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(Icons.Filled.DateRange, contentDescription = "History")
                     }
-
                     IconButton(
                         onClick = { navController.navigate("profile") },
                         modifier = Modifier.weight(1f)
@@ -246,12 +228,10 @@ fun HomeScreen(
         }
     )
 
-    // Show the EditDetailsEditor when an expense is selected for editing
     selectedExpense?.let { expense ->
-        // Edit detail editor within the HomeScreen composable
-        EditExpenseDialog (
+        EditExpenseDialog(
             expense = expense,
-            onDismiss = { selectedExpense = null},
+            onDismiss = { selectedExpense = null },
             expenseViewModel = expenseViewModel
         )
     }
@@ -264,13 +244,11 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
             .fillMaxWidth()
             .padding(vertical = 4.dp, horizontal = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = md_theme_light_surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -280,13 +258,13 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                     expense.title,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = md_theme_light_onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     "$${String.format("%.2f", expense.amount)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = md_theme_light_primary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -295,7 +273,7 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
             Text(
                 expense.description,
                 fontSize = 16.sp,
-                color = md_theme_light_onSurfaceVariant.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
             )
 
             Row(
@@ -309,23 +287,18 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                     Text(
                         expense.date,
                         fontSize = 14.sp,
-                        color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                     Text(
                         expense.time,
                         fontSize = 14.sp,
-                        color = md_theme_light_onSurfaceVariant.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     IconButton(
                         onClick = onEdit,
-                        modifier = Modifier
-                            .size(32.dp)
-                        //.background(MaterialTheme.colorScheme.primary, CircleShape)
+                        modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
                             Icons.Filled.Edit,
@@ -336,9 +309,7 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                     }
                     IconButton(
                         onClick = onDelete,
-                        modifier = Modifier
-                            .size(32.dp)
-                        //.background(Color.Red.copy(alpha = 0.8f), CircleShape)
+                        modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
                             Icons.Filled.Delete,
@@ -352,4 +323,3 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
         }
     }
 }
-
