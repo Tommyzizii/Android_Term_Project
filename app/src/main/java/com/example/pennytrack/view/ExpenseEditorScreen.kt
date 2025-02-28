@@ -9,12 +9,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pennytrack.R
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
@@ -36,6 +38,7 @@ fun EditExpenseDialog(
     var editedDescription by rememberSaveable { mutableStateOf(expense.description) }
     var editedDate by rememberSaveable { mutableStateOf(expense.date) }
     var editedTime by rememberSaveable { mutableStateOf(expense.time) }
+
 
     val expenseTypes = remember {
         listOf(
@@ -62,17 +65,18 @@ fun EditExpenseDialog(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    "Edit Expense",
+                    stringResource(R.string.edit_expense),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
+
                 OutlinedTextField(
                     value = editedName,
                     onValueChange = { editedName = it },
-                    label = { Text("Title") },
+                    label = { Text(stringResource(R.string.title)) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -85,7 +89,7 @@ fun EditExpenseDialog(
                 OutlinedTextField(
                     value = editedAmount,
                     onValueChange = { editedAmount = it },
-                    label = { Text("Amount") },
+                    label = { Text(stringResource(R.string.amount)) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -102,7 +106,7 @@ fun EditExpenseDialog(
                     OutlinedTextField(
                         value = editedDescription,
                         onValueChange = { editedDescription = it },
-                        label = { Text("Description") },
+                        label = { Text(stringResource(R.string.description)) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -150,7 +154,7 @@ fun EditExpenseDialog(
                     OutlinedTextField(
                         value = defaultDate,
                         onValueChange = { editedDate = it },
-                        label = { Text("Date") },
+                        label = { Text(stringResource(R.string.date)) },
                         modifier = Modifier.weight(1f),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = md_theme_light_primary,
@@ -168,7 +172,7 @@ fun EditExpenseDialog(
                     OutlinedTextField(
                         value = currentTime,
                         onValueChange = { editedTime = it },
-                        label = { Text("Time") },
+                        label = { Text(stringResource(R.string.time)) },
                         modifier = Modifier.weight(1f),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = md_theme_light_primary,
@@ -187,7 +191,7 @@ fun EditExpenseDialog(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
 
                     Button(
@@ -205,7 +209,7 @@ fun EditExpenseDialog(
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
                     ) {
-                        Text("Save")
+                        Text(stringResource(R.string.save))
                     }
                 }
             }

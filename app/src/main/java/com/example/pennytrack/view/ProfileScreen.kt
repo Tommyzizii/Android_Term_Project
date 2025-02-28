@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +37,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.pennytrack.R
 import com.example.pennytrack.viewmodels.AuthViewModel
 import com.example.pennytrack.viewmodels.NotificationViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -159,7 +161,7 @@ fun ProfileScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Profile",
+                            text = stringResource(R.string.profile),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary
@@ -173,7 +175,7 @@ fun ProfileScreen(
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(
                                 Icons.Filled.Menu,
-                                contentDescription = "Menu",
+                                contentDescription =stringResource(R.string.menu),
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
@@ -189,7 +191,7 @@ fun ProfileScreen(
                         onClick = { navController.navigate("home") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
+                        Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
                     }
 
                     IconButton(
@@ -198,7 +200,7 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                            contentDescription = "Chart"
+                            contentDescription = stringResource(R.string.chart)
                         )
                     }
 
@@ -208,21 +210,21 @@ fun ProfileScreen(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ) {
-                        Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                        Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_expense))
                     }
 
                     IconButton(
                         onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "History")
+                        Icon(Icons.Filled.DateRange, contentDescription =stringResource(R.string.history))
                     }
 
                     IconButton(
                         onClick = { navController.navigate("profile") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                        Icon(Icons.Filled.AccountCircle, contentDescription =  stringResource(R.string.profile))
                     }
                 }
             }
@@ -261,13 +263,13 @@ fun ProfileScreen(
                     if (profileBitmap != null) {
                         Image(
                             bitmap = profileBitmap!!.asImageBitmap(),
-                            contentDescription = "Profile Picture",
+                            contentDescription = stringResource(R.string.profile),
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Default.CameraAlt,
-                            contentDescription = "Add Profile Picture",
+                            contentDescription = stringResource(R.string.add_p),
                             modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
@@ -299,11 +301,11 @@ fun ProfileScreen(
                 ) {
                     Icon(
                         Icons.Default.Edit,
-                        contentDescription = "Edit",
+                        contentDescription = stringResource(R.string.edit),
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Edit Profile")
+                    Text(stringResource(R.string.edit_profile))
                 }
             }
         }
@@ -314,6 +316,7 @@ fun ProfileScreen(
             showDialog = showSettingsDialog,
             currentDarkMode = currentDarkMode,
             onDismiss = { showSettingsDialog = false },
+            initialLanguage = "en",
             onLanguageChange = { newLanguage -> println("Language changed to: $newLanguage") },
             onThemeChange = onThemeChange
         )

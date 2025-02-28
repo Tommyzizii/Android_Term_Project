@@ -24,12 +24,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
+import com.example.pennytrack.R
 import com.example.pennytrack.ui.theme.md_theme_light_onSurface
 import com.example.pennytrack.ui.theme.md_theme_light_primary
 import com.example.pennytrack.ui.theme.md_theme_light_primaryContainer
@@ -75,7 +77,7 @@ fun RightDrawerContent(
         drawerContainerColor = MaterialTheme.colorScheme.surface,
     ) {
         Text(
-            text = "Menu",
+            text = stringResource(R.string.menu),
             modifier = Modifier
                 .padding(24.dp),
             style = MaterialTheme.typography.titleLarge,
@@ -92,13 +94,13 @@ fun RightDrawerContent(
             icon = {
                 Icon(
                     Icons.Filled.AccountCircle,
-                    contentDescription = "Profile",
+                    contentDescription = stringResource(R.string.profile),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
-                    "Profile",
+                    text = stringResource(R.string.profile),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -119,13 +121,13 @@ fun RightDrawerContent(
             icon = {
                 Icon(
                     Icons.Filled.Settings,
-                    contentDescription = "Settings",
+                    contentDescription = stringResource(R.string.settings),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
-                    "Settings",
+                    stringResource(R.string.settings),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -149,13 +151,13 @@ fun RightDrawerContent(
             icon = {
                 Icon(
                     Icons.Filled.LocationOn,
-                    contentDescription = "Bank Locations",
+                    contentDescription = stringResource(R.string.bank_locations),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
-                    "Bank Locations",
+                    stringResource(R.string.bank_locations),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -181,13 +183,13 @@ fun RightDrawerContent(
             icon = {
                 Icon(
                     Icons.Default.Notifications,
-                    contentDescription = "Notifications",
+                    contentDescription = stringResource(R.string.noti),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
             label = {
                 Text(
-                    "Notifications",
+                    stringResource(R.string.noti),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -239,12 +241,11 @@ fun RightDrawerContent(
                 ) {
                     Icon(
                         Icons.Default.ExitToApp,
-                        contentDescription = "Logout",
-                        tint = Color.White
+                        contentDescription = stringResource(R.string.logout),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Logout",
+                        text = stringResource(R.string.logout),
                         color = Color.White
                     )
                 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ပင်နီထရက်</string>
+    <string name="settings_title">ဆက်တင်များ</string>
+    <string name="select_language">ဘာသာစကားရွေးချယ်ပါ</string>
+    <string name="english">အင်္ဂလိပ်</string>
+    <string name="myanmar">မြန်မာ</string>
+    <string name="theme_mode">အပြင်အဆင်</string>
+    <string name="light_mode">အလင်းမုဒ် ☀️</string>
+    <string name="dark_mode">မှောင်မုဒ် 🌙</string>
+    <string name="done">ပြီးပြီ</string>
+    <string name="home">မူလ</string>
+    <string name="chart">ဇယား</string>
+    <string name="add_expense">အသုံးစရိတ်ထည့်ပါ</string>
+    <string name="history">မှတ်တမ်း</string>
+    <string name="profile">ကိုယ်ရေးအချက်အလက်</string>
+    <string name="bank_locations">ဘဏ်တည်နေရာ</string>
+    <string name="expense_title">အသုံးစရိတ်ခေါင်းစဉ်</string>
+    <string name="amount">ပမာဏ</string>
+    <string name="description">ဖော်ပြချက်</string>
+    <string name="date">နေ့စွဲ</string>
+    <string name="time">အချိန်</string>
+    <string name="cancel">မလုပ်တော့</string>
+    <string name="edit_profile">ကိုယ်ရေးပြင်မည်</string>
+    <string name="total_daily_expenses">နေ့စဉ်အသုံးစရိတ်စုစုပေါင်း: $%1$s</string>
+    <string name="menu">မီနူး</string>
+    <string name="settings">ဆက်တင်များ</string>
+    <string name="birthday">မွေးနေ့</string>
+    <string name="income">ဝင်ငွေ</string>
+    <string name="expected_outcome">မျှော်မှန်းသောအသုံးစရိတ်</string>
+    <string name="monthly_history">လစဉ် မှတ်တမ်း</string>
+    <string name="monthly_expenses">လစဉ်အသုံးစရိတ်</string>
+    <string name="edit">ပြင်ဆင်မည်</string>
+    <string name="delete">ဖျက်မည်</string>
+    <string name="edit_expense">အသုံးစရိတ်ပြင်ဆင်မည်</string>
+    <string name="title">ခေါင်းစဉ်</string>
+    <string name="back">နောက်သို့</string>
+    <string name="camera">ကင်မရာ</string>
+    <string name="save">သိမ်းဆည်းမည်</string>
+    <string name="education">ပညာရေး</string>
+    <string name="groceries">ကုန်စည်</string>
+    <string name="transportation">သယ်ယူပို့ဆောင်မှု</string>
+    <string name="dining_out">စားသောက်ဆိုင်</string>
+    <string name="entertainment">ဖျော်ဖြေရေး</string>
+    <string name="shopping">ဈေးဝယ်ခြင်း</string>
+    <string name="utilities">အသုံးများ</string>
+    <string name="daily_chart">နေ့စဉ်ဇယား</string>
+
+    <string name="expense_breakdown">အသုံးစရိတ် ခွဲခြမ်းစိတ်ဖြာမှု</string>
+    <string name="gallery">ဓာတ်ပုံများ</string>
+    <string name="name">အမည်</string>
+
+    <string name="save_changes">ပြောင်းလဲမှုများကို သိမ်းဆည်းပါ</string>
+
+
+    <string name="amount_and_description">ပမာဏနှင့် ဖော်ပြချက်</string>
+
+    <string name="date_and_time">ရက်စွဲနှင့် အချိန်</string>
+    <string name="collapse">ချုံ့ရန်</string>
+    <string name="expand">ချဲ့ရန်</string>
+    <string name="no_expenses">ယနေ့ အသုံးစရိတ်မှတ်တမ်းမရှိပါ</string>
+    <string name="add_first_expense">သင့်ပထမဆုံးအသုံးစရိတ်ကိုထည့်ပါ</string>
+    <string name="expense_chart">အသုံးစရိတ် ဇယား</string>
+    <string name="todays_expenses">ယနေ့ အသုံးစရိတ်</string>
+
+    <string name="pick_time">အချိန်ရွေးပါ</string>
+    <string name="pick_date">ရက်ရွေးပါ</string>
+
+    <string name="refresh">ယနေ့အတွက် ပြန်လည်အသုံးပြုရန်</string>
+    <string name="add_p">ကိုယ်ရေးအချက်အလက်ထည့်ပါ</string>
+    <string name="nonoti">သတိပေးချက်မရှိပါ</string>
+    <string name="noti">နိုတီ</string>
+    <string name="logout">ထွက်မည်</string>
+    <string name="add">အသုံးစရိတ်ထည့်မည်</string>
+    <string name="close">ပိတ်သည်</string>
+    <string name="day">ဒီနေ့</string>
+    <string name="yes">မနေ့က</string>
+    <string name="yes_expenses">မနေ့က အသုံးစရိတ်</string>
+</resources>

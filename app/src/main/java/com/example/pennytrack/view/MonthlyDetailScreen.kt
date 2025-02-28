@@ -53,6 +53,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
+import com.example.pennytrack.R
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.pennytrack.ui.theme.md_theme_light_primary
@@ -107,7 +109,7 @@ fun MonthlyDetailScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -130,7 +132,7 @@ fun MonthlyDetailScreen(
                 ) {
                     Icon(
                         Icons.Filled.Home,
-                        contentDescription = "Home",
+                        contentDescription = stringResource(R.string.home),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -140,7 +142,7 @@ fun MonthlyDetailScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                        contentDescription = "Chart"
+                        contentDescription = stringResource(R.string.chart)
                     )
                 }
                 FloatingActionButton(
@@ -152,19 +154,19 @@ fun MonthlyDetailScreen(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_expense))
                 }
                 IconButton(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    Icon(Icons.Filled.DateRange, contentDescription = stringResource(R.string.history))
                 }
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                    Icon(Icons.Filled.AccountCircle, contentDescription = stringResource(R.string.profile))
                 }
             }
         },
@@ -225,7 +227,7 @@ fun DailyExpenseCard(
                             Icons.Filled.KeyboardArrowDown
                         else
                             Icons.Filled.KeyboardArrowRight,
-                        contentDescription = if (isExpanded) "Collapse" else "Expand",
+                        contentDescription = if (isExpanded) stringResource(R.string.collapse) else stringResource(R.string.expand),
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(

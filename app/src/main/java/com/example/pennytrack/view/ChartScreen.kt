@@ -38,11 +38,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.pennytrack.R
 import com.example.pennytrack.data.models.ExpenseChartEntry
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_onSurfaceVariant
@@ -120,7 +122,7 @@ fun ChartScreen(
                 title = {
                     Column {
                         Text(
-                            "Expense Chart",
+                            stringResource(R.string.expense_chart),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary
@@ -139,7 +141,7 @@ fun ChartScreen(
                     IconButton(onClick = { expenseViewModel.refreshTodayExpenses() }) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh Today's Data",
+                            contentDescription = stringResource(R.string.refresh),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -163,7 +165,7 @@ fun ChartScreen(
                 ) {
                     Icon(
                         Icons.Filled.Home,
-                        contentDescription = "Home",
+                        contentDescription =stringResource(R.string.home),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -173,7 +175,7 @@ fun ChartScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                        contentDescription = "Chart"
+                        contentDescription = stringResource(R.string.chart)
                     )
                 }
                 FloatingActionButton(
@@ -185,19 +187,19 @@ fun ChartScreen(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_expense))
                 }
                 IconButton(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    Icon(Icons.Filled.DateRange, contentDescription = stringResource(R.string.history))
                 }
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                    Icon(Icons.Filled.AccountCircle, contentDescription =stringResource(R.string.profile))
                 }
             }
         },
@@ -224,7 +226,7 @@ fun ChartScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Today's Expenses",
+                        text = stringResource(R.string.todays_expenses),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -259,7 +261,7 @@ fun ChartScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "No expenses recorded today",
+                            text = stringResource(R.string.no_expenses),
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -269,7 +271,7 @@ fun ChartScreen(
                         modifier = Modifier.fillMaxSize().padding(16.dp)
                     ){
                         Text(
-                            text = "Expense Breakdown",
+                            text = stringResource(R.string.expense_breakdown),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,

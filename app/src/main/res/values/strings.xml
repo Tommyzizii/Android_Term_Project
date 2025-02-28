@@ -1,3 +1,77 @@
 <resources>
-    <string name="app_name">Penny Track</string>
+    <string name="app_name">PennyTrack</string>
+    <string name="settings_title">Settings</string>
+    <string name="select_language">Select Language</string>
+    <string name="english">English</string>
+    <string name="myanmar">Myanmar</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="light_mode">Light Mode ☀️</string>
+    <string name="dark_mode">Dark Mode 🌙</string>
+    <string name="done">Done</string>
+    <string name="home">Home</string>
+    <string name="chart">Chart</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="history">History</string>
+    <string name="profile">Profile</string>
+    <string name="bank_locations">Bank Locations</string>
+    <string name="expense_title">Expense Title</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="total_daily_expenses">Total Daily Expenses: $%1$s</string>
+    <string name="menu">Menu</string>
+    <string name="settings">Settings</string>
+    <string name="birthday">Birthday</string>
+    <string name="income">Income</string>
+    <string name="expected_outcome">Expected Outcome</string>
+    <string name="monthly_history">Monthly History</string>
+    <string name="monthly_expenses">Monthly Expenses</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="edit_expense">Edit Expense</string>
+    <string name="title">Title</string>
+
+    <string name="save">Save</string>
+    <string name="education">Education</string>
+    <string name="groceries">Groceries</string>
+    <string name="transportation">Transportation</string>
+    <string name="dining_out">Dining Out</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="shopping">Shopping</string>
+    <string name="utilities">Utilities</string>
+    <string name="daily_chart">Daily Chart</string>
+
+    <string name="expense_breakdown">Expense Breakdown</string>
+
+    <string name="back">Back</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="name">Name</string>
+
+    <string name="save_changes">Save Changes</string>
+    <string name="amount_and_description">Amount &amp; Description</string>
+
+    <string name="close">Close</string>
+    <string name="date_and_time">Date &amp; Time</string>
+    <string name="nonoti">No new notifications</string>
+    <string name="add_p">Add Profile Picture</string>
+    <string name="add">Add Expense</string>
+    <string name="collapse">Collapse</string>
+    <string name="expand">Expand</string>
+    <string name="no_expenses">No expenses recorded today</string>
+    <string name="add_first_expense">Add Your First Expense</string>
+    <string name="expense_chart">Expense Chart</string>
+    <string name="todays_expenses">Today Expenses</string>
+    <string name="pick_time">Pick Time</string>
+    <string name="pick_date">Pick Date</string>
+    <string name="logout">Log Out</string>
+    <string name="noti">Notification</string>
+    <string name="refresh">Refresh Today Data</string>
+    <string name="day">Today</string>
+    <string name="yes">Yesterday</string>
+    <string name="yes_expenses">Yesterday Expenses</string>
+
 </resources>

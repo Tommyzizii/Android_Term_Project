@@ -18,11 +18,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pennytrack.R
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import java.text.SimpleDateFormat
@@ -91,7 +93,7 @@ fun HomeScreen(
                 title = {
                     Column {
                         Text(
-                            "Penny Track",
+                            stringResource(R.string.app_name),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary
@@ -126,7 +128,7 @@ fun HomeScreen(
                             contentColor = if (selectedPage == "Today") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     ) {
-                        Text("Today")
+                        Text(stringResource(R.string.day))
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     TextButton(
@@ -135,7 +137,7 @@ fun HomeScreen(
                             contentColor = if (selectedPage == "Yesterday") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     ) {
-                        Text("Yesterday")
+                        Text(stringResource(R.string.yes))
                     }
                 }
                 // Bottom Navigation Bar.
@@ -149,7 +151,7 @@ fun HomeScreen(
                     ) {
                         Icon(
                             Icons.Filled.Home,
-                            contentDescription = "Home",
+                            contentDescription =stringResource(R.string.home),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -159,7 +161,7 @@ fun HomeScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                            contentDescription = "Chart"
+                            contentDescription = stringResource(R.string.chart)
                         )
                     }
                     FloatingActionButton(
@@ -171,19 +173,19 @@ fun HomeScreen(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ) {
-                        Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                        Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_expense),)
                     }
                     IconButton(
                         onClick = { navController.navigate("history") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "History")
+                        Icon(Icons.Filled.DateRange, contentDescription = stringResource(R.string.history))
                     }
                     IconButton(
                         onClick = { navController.navigate("profile") },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                        Icon(Icons.Filled.AccountCircle, contentDescription =stringResource(R.string.profile))
                     }
                 }
             }
@@ -212,7 +214,7 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = if (selectedPage == "Today") "Today's Expenses" else "Yesterday's Expenses",
+                                text = if (selectedPage == "Today") stringResource(R.string.todays_expenses) else stringResource(R.string.yes_expenses),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -258,7 +260,7 @@ fun HomeScreen(
                                         containerColor = MaterialTheme.colorScheme.primary
                                     )
                                 ) {
-                                    Text("Add Your First Expense")
+                                    Text(stringResource(R.string.add_first_expense))
                                 }
                             }
                         }
@@ -357,7 +359,7 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                     ) {
                         Icon(
                             Icons.Filled.Edit,
-                            contentDescription = "Edit",
+                            contentDescription = stringResource(R.string.edit),
                             tint = Color.Blue,
                             modifier = Modifier.size(16.dp)
                         )
@@ -368,7 +370,7 @@ fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {
                     ) {
                         Icon(
                             Icons.Filled.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(R.string.delete),
                             tint = Color.Red,
                             modifier = Modifier.size(16.dp)
                         )

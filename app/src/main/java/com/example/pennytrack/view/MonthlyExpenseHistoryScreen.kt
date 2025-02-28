@@ -36,10 +36,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.pennytrack.R
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimary
 import com.example.pennytrack.ui.theme.md_theme_light_onPrimaryContainer
@@ -62,7 +64,7 @@ fun MonthlyExpenseScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Monthly History",
+                        stringResource(R.string.monthly_history),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -84,7 +86,7 @@ fun MonthlyExpenseScreen(
                     onClick = { navController.navigate("home") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.Home, contentDescription = "Home")
+                    Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
                 }
 
                 IconButton(
@@ -93,7 +95,7 @@ fun MonthlyExpenseScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                        contentDescription = "Chart"
+                        contentDescription = stringResource(R.string.chart)
                     )
                 }
 
@@ -106,21 +108,21 @@ fun MonthlyExpenseScreen(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_expense))
                 }
 
                 IconButton(
                     onClick = { navController.navigate("history") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "History")
+                    Icon(Icons.Filled.DateRange, contentDescription =stringResource(R.string.history))
                 }
 
                 IconButton(
                     onClick = { navController.navigate("profile") },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+                    Icon(Icons.Filled.AccountCircle, contentDescription =stringResource(R.string.profile))
                 }
             }
         },

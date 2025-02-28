@@ -1,5 +1,7 @@
 package com.example.pennytrack
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -33,9 +35,11 @@ import com.example.pennytrack.view.HomeScreen
 import com.example.pennytrack.view.MonthlyExpenseScreen
 import com.example.pennytrack.view.ProfileScreen
 import com.example.pennytrack.ui.theme.PennyTrackTheme
+import com.example.pennytrack.utils.LocaleHelper
 import com.example.pennytrack.view.EditProfileScreen
 import com.example.pennytrack.view.LoginPage
 import com.example.pennytrack.view.MonthlyDetailScreen
+import com.example.pennytrack.view.SettingsDialog
 import com.example.pennytrack.view.SignupPage
 import com.example.pennytrack.viewmodels.AuthState
 import com.example.pennytrack.viewmodels.AuthViewModel
@@ -43,9 +47,22 @@ import com.example.pennytrack.viewmodels.ExpenseViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : FragmentActivity() {
+    private lateinit var sharedPreferences: SharedPreferences
+    override fun attachBaseContext(newBase: Context) {
+        // Ensure the app starts with the correct language
+        val context = LocaleHelper.attachBaseContext(newBase)
+        super.attachBaseContext(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+
+        val savedLanguage = LocaleHelper.getSavedLanguage(this)
+        LocaleHelper.setLocale(this, savedLanguage)
+
         setContent {
             val context = LocalContext.current
             var isDarkTheme by remember { mutableStateOf(false) }
@@ -59,6 +76,14 @@ class MainActivity : FragmentActivity() {
 
             PennyTrackTheme(darkTheme = isDarkTheme) {
                 MyApp(
+                    initialLanguage = savedLanguage, // ✅ Pass saved language
+                    onLanguageChange = { newLanguage ->
+                        if (newLanguage != savedLanguage) {
+                            sharedPreferences.edit().putString("language", newLanguage).apply()
+                            recreate() // ✅ Restart only if language changes
+                        }
+                    },
+
                     currentDarkMode = isDarkTheme,
                     onThemeChange = {
                     newDarkMode ->
@@ -74,11 +99,14 @@ class MainActivity : FragmentActivity() {
 }
 
 @Composable
-fun MyApp(modifier: Modifier = Modifier, currentDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
+fun MyApp(initialLanguage: String,
+          onLanguageChange: (String) -> Unit,modifier: Modifier = Modifier, currentDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()  // Creating a navigation controller
     val expenseViewModel: ExpenseViewModel = viewModel()  // Initializing ViewModel
     val authViewModel : AuthViewModel = viewModel()
     val authState = authViewModel.authState.observeAsState()
+    var selectedLanguage by remember { mutableStateOf(initialLanguage) }
+
     val startDestination = when (authState.value) {
         is AuthState.Authenticated -> "home"  // If authenticated, go to home
         else -> "Login"  // Otherwise, go to login
@@ -119,6 +147,19 @@ fun MyApp(modifier: Modifier = Modifier, currentDarkMode: Boolean, onThemeChange
         }
         composable("bankLocations"){
             BankLocations(navController)
+        }
+        composable("settings") {
+            SettingsDialog(
+                showDialog = true,
+                onDismiss = { navController.popBackStack() },
+                initialLanguage = selectedLanguage,  // ✅ Pass the stored language
+                onLanguageChange = { newLanguage ->
+                    selectedLanguage = newLanguage
+                    onLanguageChange(newLanguage)
+                },
+                currentDarkMode = currentDarkMode,
+                onThemeChange = onThemeChange
+            )
         }
     }
 }

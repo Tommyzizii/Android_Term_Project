@@ -1,5 +1,7 @@
 package com.example.pennytrack.view
 
+import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,20 +25,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.pennytrack.R
+import com.example.pennytrack.utils.LocaleHelper
 
 @Composable
 fun SettingsDialog(
     showDialog: Boolean,
     currentDarkMode: Boolean,
+    initialLanguage: String,
     onDismiss: () -> Unit,
     onLanguageChange: (String) -> Unit,
     onThemeChange: (Boolean) -> Unit
 ) {
-    var selectedLanguage by remember { mutableStateOf("English") }
+    val context = LocalContext.current
+    var selectedLanguage by remember { mutableStateOf(initialLanguage) }
     var isDarkMode by remember { mutableStateOf(false) }
+    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
 
     if (showDialog) {
         Dialog(
@@ -53,7 +63,7 @@ fun SettingsDialog(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Settings",
+                        text = stringResource(R.string.settings_title),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -61,25 +71,24 @@ fun SettingsDialog(
                     Divider(color = MaterialTheme.colorScheme.surfaceVariant)
 
                     Text(
-                        text = "Select Language:",
+                        text = stringResource(R.string.select_language),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Column {
-                        listOf("English", "Myanmar").forEach { language ->
+                        listOf("en" to R.string.english, "my" to R.string.myanmar).forEach { (code, resId) ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = language,
+                                    text = stringResource(resId),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 RadioButton(
-                                    selected = (selectedLanguage == language),
+                                    selected = (selectedLanguage == code),
                                     onClick = {
-                                        selectedLanguage = language
-                                        onLanguageChange(language)
+                                        selectedLanguage = code
                                     },
                                     colors = RadioButtonDefaults.colors(
                                         selectedColor = MaterialTheme.colorScheme.primary,
@@ -93,7 +102,7 @@ fun SettingsDialog(
                     Divider(color = MaterialTheme.colorScheme.surfaceVariant)
 
                     Text(
-                        text = "Theme Mode:",
+                        text = stringResource(R.string.theme_mode),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -102,7 +111,7 @@ fun SettingsDialog(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = if (currentDarkMode) "Dark Mode 🌙" else "Light Mode ☀️",
+                            text = if (isDarkMode) stringResource(R.string.dark_mode) else stringResource(R.string.light_mode),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Switch(
@@ -120,14 +129,25 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
-                        onClick = onDismiss,
+                        onClick = {
+                            sharedPreferences.edit().putString("language", selectedLanguage).apply()
+
+                            // ✅ Update UI immediately
+                            onLanguageChange(selectedLanguage)
+
+                            // ✅ Apply language change and restart activity
+                            (context as? Activity)?.let { activity ->
+                                LocaleHelper.setLocale(activity, selectedLanguage)
+                                activity.recreate() // Restart the activity
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
-                        Text("Done")
+                        Text(stringResource(R.string.done))
                     }
                 }
             }

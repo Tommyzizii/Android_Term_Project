@@ -14,12 +14,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.pennytrack.R
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.ui.theme.*
@@ -96,7 +98,7 @@ fun AddExpenseScreen(
             SmallTopAppBar(
                 title = {
                     Text(
-                        "Add Expense",
+                        stringResource(R.string.add_expense),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -124,7 +126,7 @@ fun AddExpenseScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Expense Title", modifier = Modifier.fillMaxWidth()
+            Text(stringResource(R.string.expense_title), modifier = Modifier.fillMaxWidth()
                 .padding(top = 2.dp),
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Medium,
@@ -144,7 +146,7 @@ fun AddExpenseScreen(
                         .padding(16.dp),
                     value = expenseTitle,
                     onValueChange = { expenseTitle = it },
-                    label = { Text("Title") },
+                    label = { Text(stringResource(R.string.title)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -153,7 +155,7 @@ fun AddExpenseScreen(
                 )
             }
 
-            Text("Amount & Description", modifier = Modifier.fillMaxWidth()
+            Text(stringResource(R.string.amount_and_description), modifier = Modifier.fillMaxWidth()
                 .padding(top = 2.dp),
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Medium,
@@ -175,7 +177,7 @@ fun AddExpenseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = expenseAmount,
                         onValueChange = { expenseAmount = it },
-                        label = { Text("Amount ($)") },
+                        label = { Text(stringResource(R.string.amount)) },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -191,7 +193,7 @@ fun AddExpenseScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = expenseDescription,
                             onValueChange = { expenseDescription = it },
-                            label = { Text("Description") },
+                            label = { Text(stringResource(R.string.description)) },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -228,7 +230,7 @@ fun AddExpenseScreen(
                 }
             }
 
-            Text("Date & Time", modifier = Modifier.fillMaxWidth()
+            Text(stringResource(R.string.date_and_time), modifier = Modifier.fillMaxWidth()
                 .padding(top = 2.dp),
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Medium,
@@ -250,13 +252,13 @@ fun AddExpenseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = expenseDate,
                         onValueChange = {},
-                        label = { Text("Date") },
+                        label = { Text(stringResource(R.string.date)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { datePickerDialog.show() }) {
                                 Icon(
                                     Icons.Default.Edit,
-                                    contentDescription = "Pick Date",
+                                    contentDescription = stringResource(R.string.pick_date),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -271,13 +273,13 @@ fun AddExpenseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = expenseTime,
                         onValueChange = {},
-                        label = { Text("Time") },
+                        label = { Text(stringResource(R.string.time)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { timePickerDialog.show() }) {
                                 Icon(
                                     Icons.Default.Edit,
-                                    contentDescription = "Pick Time",
+                                    contentDescription = stringResource(R.string.pick_time),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -305,7 +307,7 @@ fun AddExpenseScreen(
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
 
                 Button(
@@ -330,7 +332,7 @@ fun AddExpenseScreen(
                     ),
                     enabled = expenseTitle.isNotBlank() && expenseAmount.isNotBlank()
                 ) {
-                    Text("Add Expense")
+                    Text(stringResource(R.string.add_expense))
                 }
             }
         }
