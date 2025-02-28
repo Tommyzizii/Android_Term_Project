@@ -53,4 +53,13 @@ interface ExpenseDao {
     """)
     fun getExpensesByMonth(monthYear: String): Flow<List<Expense>>
 
+    @Query("""
+        SELECT SUM(amount)
+        FROM expenses     
+        WHERE substr(date, 4, 7) = :monthYear
+    """)
+    fun getTotalExpenseForSpecificMonth(monthYear: String): Flow<Float?>
+
+
+
 }

@@ -42,4 +42,9 @@ class ExpenseRepository(
         expenseDao.deleteExpense(expense)
     }
 
+    // Method to fetch total expense for a specific month
+    fun getTotalExpenseForSpecificMonth(monthYear: String): Flow<Float?> {
+        return expenseDao.getTotalExpenseForSpecificMonth(monthYear)
+    }
+
 }

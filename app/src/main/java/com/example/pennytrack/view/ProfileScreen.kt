@@ -34,8 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.pennytrack.viewmodels.AuthViewModel
+import com.example.pennytrack.viewmodels.NotificationViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -53,6 +55,7 @@ fun ProfileScreen(
     val scope = rememberCoroutineScope()
     var profileBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var showSettingsDialog by remember { mutableStateOf(false) }
+    val notificationViewModel: NotificationViewModel = viewModel()
 
     val context = LocalContext.current
     val activity = context as? FragmentActivity ?: return
@@ -145,7 +148,8 @@ fun ProfileScreen(
                 authViewModel = authViewModel,
                 navController = navController,
                 drawerState = drawerState,
-                onSettingsClick = { showSettingsDialog = true }
+                onSettingsClick = { showSettingsDialog = true },
+                notificationViewModel = notificationViewModel
             )
         },
         modifier = Modifier.fillMaxSize()

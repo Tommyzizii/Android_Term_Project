@@ -1,6 +1,7 @@
 package com.example.pennytrack.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -10,15 +11,19 @@ import com.example.pennytrack.dao.ExpenseDatabase
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.data.models.MonthlyTotal
 import com.example.pennytrack.repository.ExpenseRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -26,6 +31,9 @@ import java.util.Locale
 
 class ExpenseViewModel(application: Application): AndroidViewModel(application) {
     private val repository: ExpenseRepository
+
+    //Notification
+    private val notificationViewModel: NotificationViewModel = NotificationViewModel()
 
     // Current date tracking
     private val _currentDate = MutableStateFlow(getTodayDate())
@@ -83,6 +91,21 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
             repository.allExpenses.collect { expenses ->
                 println("Total expenses in database: ${expenses.size}")
                 println("Sample expense dates: ${expenses.take(5).map { it.date }}")
+            }
+        }
+    }
+
+    fun checkExpenseThresholds(monthlyTotal: Float, expectedOutcome: Float, userId: String) {
+        Log.d("ExpenseDebug", "reach")
+        when {
+            monthlyTotal >= expectedOutcome -> {
+                notificationViewModel.addNotification(userId, "You have exceeded your expected outcome!")
+            }
+            monthlyTotal >= expectedOutcome * 2 / 3 -> {
+                notificationViewModel.addNotification(userId, "You are close to your expected outcome.Current total expense \$ $monthlyTotal .")
+            }
+            monthlyTotal >= expectedOutcome / 2 -> {
+                notificationViewModel.addNotification(userId, "You are halfway to your expected outcome.")
             }
         }
     }
@@ -174,6 +197,37 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
             expense
         }
         repository.insert(finalExpense)
+        Log.d("ExpenseDebug", "Expense added: ${finalExpense.title}")
+
+        // Fetch the current user's ID
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.d("ExpenseDebug", "User ID: $userId")
+
+        // Fetch the expected outcome from Firestore
+        if (userId != null) {
+            val expectedOutcome = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .get()
+                .await()
+                .getString("expectedOutcome")
+                ?.toFloatOrNull() ?: 0f
+
+            // Get the month-year for the added expense (in the format MM/yyyy)
+            val monthYear = finalExpense.date.substring(3, 10)  // Extract MM/yyyy from dd/MM/yyyy
+            Log.d("ExpenseDebug", "Extracted monthYear: $monthYear")
+
+            // Get the total expense for the specific month
+            val monthlyTotal = repository.getTotalExpenseForSpecificMonth(monthYear)
+                .map { it ?: 0f }
+                .first() // Get the first value emitted by the Flow
+            Log.d("ExpenseDebug", "Expected outcome: $expectedOutcome")
+            Log.d("ExpenseDebug", "Monthly total for $monthYear: $monthlyTotal")
+
+            // Check thresholds and trigger notifications
+            checkExpenseThresholds(monthlyTotal, expectedOutcome, userId)
+        }
+
     }
 
     fun updateExpense(expense: Expense) = viewModelScope.launch(Dispatchers.IO) {
