@@ -16,12 +16,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,14 +35,19 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
+import com.example.pennytrack.viewmodels.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     navController: NavController,
     currentDarkMode: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    authViewModel: AuthViewModel
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -51,6 +58,33 @@ fun ProfileScreen(
     val activity = context as? FragmentActivity ?: return
 
     val executor = remember { ContextCompat.getMainExecutor(context) }
+
+    val username by authViewModel.username.observeAsState()
+    val isLoading by authViewModel.isLoading.observeAsState(initial = true)
+
+    // State for profile details
+    var birthday by remember { mutableStateOf("") }
+    var income by remember { mutableStateOf("") }
+    var expectedOutcome by remember { mutableStateOf("") }
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userId = currentUser?.uid
+
+    LaunchedEffect(userId) {
+        authViewModel.fetchUsername()
+        if (userId != null) {
+            FirebaseFirestore.getInstance().collection("users").document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    birthday = document.getString("birthday") ?: ""
+                    income = document.getString("income") ?: ""
+                    expectedOutcome = document.getString("expectedOutcome") ?: ""
+                }
+                .addOnFailureListener { e ->
+                    // Handle error
+                }
+        }
+    }
 
     // Set up the BiometricPrompt with its authentication callback.
     val biometricPrompt = remember {
@@ -91,11 +125,24 @@ fun ProfileScreen(
         profileBitmap = bitmap
     }
 
+    // DatePickerDialog
+    val calendar = Calendar.getInstance()
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            birthday = "$dayOfMonth/${month + 1}/$year" // Update birthday state
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true,
         drawerContent = {
             RightDrawerContent(
+                authViewModel = authViewModel,
                 navController = navController,
                 drawerState = drawerState,
                 onSettingsClick = { showSettingsDialog = true }
@@ -184,12 +231,18 @@ fun ProfileScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Thant Zin Min",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(48.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    Text(
+                        text = username ?: "Unknown",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Box(
@@ -208,10 +261,11 @@ fun ProfileScreen(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Text(
-                            text = "T",
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        Icon(
+                            imageVector = Icons.Default.CameraAlt,
+                            contentDescription = "Add Profile Picture",
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
@@ -220,9 +274,9 @@ fun ProfileScreen(
 
                 ProfileDetailCard(
                     details = listOf(
-                        "Birthday" to "04/06/2004",
-                        "Income" to "50,000",
-                        "Expected Outcome" to "30,000"
+                        "Birthday" to birthday,
+                        "Income" to income,
+                        "Expected Outcome" to expectedOutcome
                     )
                 )
 

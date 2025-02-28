@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pennytrack.data.models.Expense
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,11 +35,18 @@ fun HomeScreen(
     navController: NavController,
     expenseViewModel: ExpenseViewModel
 ) {
-    val expenses = expenseViewModel.expenses.collectAsState().value
-    val currentDate = expenseViewModel.currentDate.collectAsState().value
+    // Collect expenses and current date from the view model.
+    val expenses by expenseViewModel.expenses.collectAsState()
+    val currentDate by expenseViewModel.currentDate.collectAsState()
     var selectedExpense by remember { mutableStateOf<Expense?>(null) }
+    // Get the total expense for the current date from LiveData.
+    val totalExpense by expenseViewModel.getTotalExpenseForDay(currentDate).observeAsState(0f)
 
-    // Format current date for display
+    // Determine whether the current page is Today or Yesterday.
+    val isToday = expenseViewModel.isToday(currentDate)
+    val isYesterday = expenseViewModel.isYesterday(currentDate)
+
+    // Format the current date for display.
     val dateFormatter = remember { SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) }
     val displayDate = remember(currentDate) {
         try {
@@ -48,17 +57,34 @@ fun HomeScreen(
         }
     }
 
-    // Calculate total expenses for today
+    // Calculate total expenses from the list (optional if you want to use the LiveData total).
     val totalExpenses = expenses.sumOf { it.amount.toDouble() }
 
-    // Ensure today's expenses are refreshed when this screen appears
+    // When the HomeScreen appears, refresh today's expenses.
     LaunchedEffect(Unit) {
         expenseViewModel.refreshTodayExpenses()
     }
 
-    // Navigation logic for Home screen
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    // Pagination: Toggle between Today and Yesterday.
+    var selectedPage by remember { mutableStateOf("Today") }
+    val todayDate = expenseViewModel.getTodayDate()
+    val yesterdayDate = remember {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        dateFormat.format(calendar.time)
+    }
+    // When selectedPage changes, update the view model's current date.
+    LaunchedEffect(selectedPage) {
+        if (selectedPage == "Today") {
+            expenseViewModel.setDate(todayDate)
+        } else {
+            expenseViewModel.setDate(yesterdayDate)
+        }
+    }
 
+    // UI Scaffold with top bar, bottom pagination toggle, and expense list.
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,99 +111,35 @@ fun HomeScreen(
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
-        content = { innerPadding ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                Column(
+        bottomBar = {
+            Column {
+                // Pagination Toggle Row.
+                Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    // Total Daily Expenses Display
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    TextButton(
+                        onClick = { selectedPage = "Today" },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = if (selectedPage == "Today") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Today's Expenses",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier = Modifier.padding(end = 32.dp)
-                            )
-                            Text(
-                                text = "$${String.format("%.2f", totalExpenses)}",
-                                fontSize = 21.sp,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
+                        Text("Today")
                     }
-
-                    // Empty state message or Expense List
-                    if (expenses.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.MoneyOff,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(64.dp),
-                                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                                )
-                                Text(
-                                    "No expenses recorded today",
-                                    fontSize = 16.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                                )
-                                Button(
-                                    onClick = { navController.navigate("addExpense") },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                    )
-                                ) {
-                                    Text("Add Your First Expense")
-                                }
-                            }
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                        ) {
-                            items(expenses) { expense ->
-                                ExpenseItem(
-                                    expense = expense,
-                                    onEdit = { selectedExpense = expense },
-                                    onDelete = { expenseViewModel.removeExpense(expense) }
-                                )
-                            }
-                        }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    TextButton(
+                        onClick = { selectedPage = "Yesterday" },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = if (selectedPage == "Yesterday") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) {
+                        Text("Yesterday")
                     }
                 }
-
+                // Bottom Navigation Bar.
                 BottomAppBar(
-                    modifier = Modifier.align(Alignment.BottomCenter),
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.primary
                 ) {
@@ -225,17 +187,110 @@ fun HomeScreen(
                     }
                 }
             }
+        },
+        content = { innerPadding ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    // Total Expenses Display Card.
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (selectedPage == "Today") "Today's Expenses" else "Yesterday's Expenses",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                modifier = Modifier.padding(end = 32.dp)
+                            )
+                            Text(
+                                text = "$${String.format("%.2f", totalExpenses)}",
+                                fontSize = 21.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+
+                    // Expense List or Empty State.
+                    if (expenses.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    Icons.Filled.MoneyOff,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                )
+                                Text(
+                                    "No expenses recorded for ${if (selectedPage == "Today") "today" else "yesterday"}",
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                                Button(
+                                    onClick = { navController.navigate("addExpense") },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                    )
+                                ) {
+                                    Text("Add Your First Expense")
+                                }
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                        ) {
+                            items(expenses) { expense ->
+                                ExpenseItem(
+                                    expense = expense,
+                                    onEdit = { selectedExpense = expense },
+                                    onDelete = { expenseViewModel.removeExpense(expense) }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                selectedExpense?.let { expense ->
+                    EditExpenseDialog(
+                        expense = expense,
+                        onDismiss = { selectedExpense = null },
+                        expenseViewModel = expenseViewModel
+                    )
+                }
+            }
         }
     )
-
-    selectedExpense?.let { expense ->
-        EditExpenseDialog(
-            expense = expense,
-            onDismiss = { selectedExpense = null },
-            expenseViewModel = expenseViewModel
-        )
-    }
 }
+
 
 @Composable
 fun ExpenseItem(expense: Expense, onEdit: () -> Unit, onDelete: () -> Unit) {

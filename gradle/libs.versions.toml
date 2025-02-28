@@ -6,6 +6,8 @@ compose = "1.11.0"
 composeVersion = "1.9.0"
 datastorePreferences = "1.1.2"
 firebaseBom = "33.9.0"
+googlePlayServicesMaps = "18.1.0"
+googlePlayServicesMapsVersion = "19.1.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -17,6 +19,7 @@ activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 mapsCompose = "4.3.2"
 mapsComposeUtils = "4.3.2"
+mapsComposeVersion = "2.11.0"
 materialIconsExtended = "1.7.8"
 navigationCompose = "2.8.6"
 patrykandpatrickCompose = "1.10.0"
@@ -71,8 +74,11 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "mapsComposeUtils" }
+maps-compose-v2110 = { module = "com.google.maps.android:maps-compose", version.ref = "mapsComposeVersion" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-services-maps-v1810 = { module = "com.google.android.gms:play-services-maps", version.ref = "googlePlayServicesMaps" }
 play-services-maps-v1820 = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMapsVersion" }
+play-services-maps-v1910 = { module = "com.google.android.gms:play-services-maps", version.ref = "googlePlayServicesMapsVersion" }
 views = { module = "com.patrykandpatrick.vico:views", version.ref = "vicoVersion" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }

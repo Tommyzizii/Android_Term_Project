@@ -9,10 +9,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.AppComponentFactory
@@ -32,7 +34,11 @@ import com.example.pennytrack.view.MonthlyExpenseScreen
 import com.example.pennytrack.view.ProfileScreen
 import com.example.pennytrack.ui.theme.PennyTrackTheme
 import com.example.pennytrack.view.EditProfileScreen
+import com.example.pennytrack.view.LoginPage
 import com.example.pennytrack.view.MonthlyDetailScreen
+import com.example.pennytrack.view.SignupPage
+import com.example.pennytrack.viewmodels.AuthState
+import com.example.pennytrack.viewmodels.AuthViewModel
 import com.example.pennytrack.viewmodels.ExpenseViewModel
 import kotlinx.coroutines.launch
 
@@ -68,11 +74,23 @@ class MainActivity : FragmentActivity() {
 }
 
 @Composable
-fun MyApp(currentDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
+fun MyApp(modifier: Modifier = Modifier, currentDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
     val navController = rememberNavController()  // Creating a navigation controller
     val expenseViewModel: ExpenseViewModel = viewModel()  // Initializing ViewModel
+    val authViewModel : AuthViewModel = viewModel()
+    val authState = authViewModel.authState.observeAsState()
+    val startDestination = when (authState.value) {
+        is AuthState.Authenticated -> "home"  // If authenticated, go to home
+        else -> "Login"  // Otherwise, go to login
+    }
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = startDestination) {
+        composable("Login"){
+            LoginPage(modifier,navController,authViewModel)
+        }
+        composable("Signup"){
+            SignupPage(modifier,navController,authViewModel)
+        }
         composable("home") {
             HomeScreen(navController, expenseViewModel)  // Pass ViewModel to HomeScreen
         }
@@ -94,7 +112,7 @@ fun MyApp(currentDarkMode: Boolean, onThemeChange: (Boolean) -> Unit) {
             MonthlyDetailScreen(navController, expenseViewModel, monthYear)
         }
         composable("profile"){
-            ProfileScreen(navController,currentDarkMode ,onThemeChange)
+            ProfileScreen(navController,currentDarkMode ,onThemeChange, authViewModel)
         }
         composable("editProfile") {
             EditProfileScreen(navController = navController)

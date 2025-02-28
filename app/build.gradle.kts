@@ -93,6 +93,11 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
 
+    //Map
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps.v1910)
+
+
     // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

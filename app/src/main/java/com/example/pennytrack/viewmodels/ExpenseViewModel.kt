@@ -15,10 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -50,16 +52,16 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
         allExpenses = repository.allExpenses.asLiveData()
 
         // Initialize with today's expenses
-        viewModelScope.launch {
-            repository.getExpensesByDate(_currentDate.value)
-                .collect { expenses ->
-                    _expenses.value = expenses
-                }
-        }
+//        viewModelScope.launch {
+//            repository.getExpensesByDate(_currentDate.value)
+//                .collect { expenses ->
+//                    _expenses.value = expenses
+//                }
+//        }
 
         // Watch for date changes
         viewModelScope.launch {
-            _currentDate.collect { date ->
+            _currentDate.collectLatest { date ->
                 repository.getExpensesByDate(date)
                     .collect { expenses ->
                         _expenses.value = expenses
@@ -91,6 +93,13 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
         return dateFormat.format(Date())
     }
 
+    fun getYesterdayDate(): String {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return dateFormat.format(calendar.time)
+    }
+
     fun getCurrentMonth(): String {
         val dateFormat = SimpleDateFormat("MM/yyyy", Locale.getDefault())
         return dateFormat.format(Date())
@@ -98,6 +107,25 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
 
     fun setDate(date: String) {
         _currentDate.value = date
+    }
+
+    fun goToPreviousDay() {
+        val currentFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val date = currentFormat.parse(_currentDate.value) ?: return
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        _currentDate.value = currentFormat.format(calendar.time)
+    }
+
+
+    fun goToNextDay() {
+        val currentFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val date = currentFormat.parse(_currentDate.value) ?: return
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
+        _currentDate.value = currentFormat.format(calendar.time)
     }
 
     fun setMonth(monthYear: String) {
@@ -234,6 +262,16 @@ class ExpenseViewModel(application: Application): AndroidViewModel(application) 
         } catch (e: Exception) {
             dateString
         }
+    }
+
+    // Check if a date is today
+    fun isToday(dateString: String): Boolean {
+        return dateString == getTodayDate()
+    }
+
+    // Check if a date is yesterday
+    fun isYesterday(dateString: String): Boolean {
+        return dateString == getYesterdayDate()
     }
 
     // Check if a given month is the current month

@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,10 +40,10 @@ fun EditProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.surface
 
-    var name by remember { mutableStateOf(TextFieldValue("Thant Zin Min")) }
-    var birthday by remember { mutableStateOf(TextFieldValue("04/06/2004")) }
-    var income by remember { mutableStateOf(TextFieldValue("50,000")) }
-    var outcome by remember { mutableStateOf(TextFieldValue("30,000")) }
+    //var name by remember { mutableStateOf(TextFieldValue("Thant Zin Min")) }
+    var birthday by remember { mutableStateOf(TextFieldValue("")) }
+    var income by remember { mutableStateOf(TextFieldValue("")) }
+    var outcome by remember { mutableStateOf(TextFieldValue("")) }
     var profileBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -84,8 +86,7 @@ fun EditProfileScreen(navController: NavController) {
                 },
                 actions = {
                     IconButton(onClick = {
-                        println("Saved: $name, $birthday, $income, $outcome")
-                        navController.popBackStack()
+                        saveProfileChanges(birthday, income, outcome, navController)
                     }) {
                         Icon(
                             Icons.Filled.Save,
@@ -193,23 +194,24 @@ fun EditProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             // Text fields
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                    focusedLabelColor = MaterialTheme.colorScheme.primary
-                ),
-                shape = RoundedCornerShape(12.dp)
-            )
+//            OutlinedTextField(
+//                value = name,
+//                onValueChange = { name = it },
+//                label = { Text("Name", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+//                singleLine = true,
+//                modifier = Modifier.fillMaxWidth(),
+//                colors = TextFieldDefaults.outlinedTextFieldColors(
+//                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+//                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+//                    cursorColor = MaterialTheme.colorScheme.primary,
+//                    focusedLabelColor = MaterialTheme.colorScheme.primary
+//                ),
+//                shape = RoundedCornerShape(12.dp)
+//            )
+//
+//            Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            // Text fields for profile details
             OutlinedTextField(
                 value = birthday,
                 onValueChange = { birthday = it },
@@ -282,11 +284,10 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Save button
+            // Save Changes button that updates Firestore with new data
             Button(
                 onClick = {
-                    println("Saved: $name, $birthday, $income, $outcome")
-                    navController.popBackStack()
+                    saveProfileChanges(birthday, income, outcome, navController)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -302,5 +303,33 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
         }
+    }
+}
+
+private fun saveProfileChanges(
+    birthday: TextFieldValue,
+    income: TextFieldValue,
+    outcome: TextFieldValue,
+    navController: NavController
+) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser != null) {
+        val userDocRef = FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(currentUser.uid)
+        val updatedData: Map<String, Any> =  hashMapOf(
+            "birthday" to birthday.text,
+            "income" to income.text,
+            "expectedOutcome" to outcome.text
+        )
+        userDocRef.update(updatedData)
+            .addOnSuccessListener {
+                // After a successful update, navigate back to the ProfileScreen
+                navController.popBackStack()
+            }
+            .addOnFailureListener { e ->
+                // Handle the error, e.g., show a Snackbar or log the error
+                println("Error updating profile: ${e.message}")
+            }
     }
 }
